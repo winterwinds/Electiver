@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Electiver</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_schedule">课表</string>>
+    <string name="title_elective_assistant">选课助手</string>
+    <string name="title_account">账户</string>
+</resources>

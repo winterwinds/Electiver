@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_schedule"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_schedule" />
+
+    <item
+        android:id="@+id/navigation_elective_assistant"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/title_elective_assistant" />
+
+    <item
+        android:id="@+id/navigation_account"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/title_account" />
+
+</menu>
