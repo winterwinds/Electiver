@@ -13,13 +13,26 @@
         android:theme="@style/Theme.Electiver">
         <activity
             android:name="com.example.electiver.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.example.electiver.LoginActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+
+        <activity android:name="com.example.electiver.RegisterActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+
     </application>
 
 </manifest>
