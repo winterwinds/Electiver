@@ -10,10 +10,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.electiver.ui.schedule.ScheduleFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,10 +26,21 @@ public class MainActivity extends AppCompatActivity {
 
     private Boolean isFirstUse;
     private TextView mTextMessage;
+    private FragmentTransaction transaction;
+    private FragmentManager fragmentManager;
+
+    private void setDefaultFragment(){
+        fragmentManager = getSupportFragmentManager();
+        transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.content, new ScheduleFragment());
+        transaction.commit();
+    }
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            fragmentManager = getSupportFragmentManager();
+            transaction = fragmentManager.beginTransaction();
             switch(item.getItemId()){
                 case R.id.navigation_schedule:
                     mTextMessage.setText(R.string.title_schedule);
@@ -62,18 +76,29 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
     public void init(){
-        SharedPreferences firstuse = getSharedPreferences("isFirstUse", MODE_PRIVATE);
-        isFirstUse = firstuse.getBoolean("isFirstUse", true);
-        if(isFirstUse) {
+        SharedPreferences firstuse = getSharedPreferences("loginInfo", MODE_PRIVATE);
+        isFirstUse = firstuse.getBoolean("isLogin", false);
+        if(!isFirstUse) {
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         }else{
 
         }
-        SharedPreferences.Editor editor = firstuse.edit();
-        editor.putBoolean("isFirstUse",false);
-        editor.commit();
+
+        Button btn_logout = (Button) findViewById(R.id.account_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "退出登录", Toast.LENGTH_SHORT).show();
+                SharedPreferences.Editor editor = firstuse.edit();
+                editor.putBoolean("isLogin",false);
+                editor.commit();
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }

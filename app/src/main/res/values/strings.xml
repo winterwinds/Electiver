@@ -9,11 +9,21 @@
     <string name="account_number">账号</string>
     <string name="password">密码</string>
     <string name="log_in">登陆</string>
+    <string name="log_out">退出登陆</string>
     <string name="sign_up">注册</string>
     <string name="agree_on_clause">登陆即代表阅读并同意服务条款</string>
     <string name="register_enterpassword">请输入密码</string>
     <string name="register_ensurepassword">请再次输入密码</string>
     <string name="department">院系</string>
     <string name="major">专业</string>
+    <!-- schedule fragment -->
+    <string name="text_mon">星期一</string>
+    <string name="text_tues">星期二</string>
+    <string name="text_wed">星期三</string>
+    <string name="text_thur">星期四</string>
+    <string name="text_fri">星期五</string>
+    <string name="text_sat">星期六</string>
+    <string name="text_sun">星期日</string>
+    <!-- schedule fragment -->
 
 </resources>

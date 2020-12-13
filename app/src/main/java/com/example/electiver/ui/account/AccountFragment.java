@@ -30,6 +30,8 @@ public class AccountFragment extends Fragment {
                 textView.setText(s);
             }
         });
+
+
         return root;
     }
 }
