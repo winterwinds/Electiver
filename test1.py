@@ -112,12 +112,12 @@ def decode_auth_token(auth_token):
         print 'Invalid token. Please log in again.\n'
         return 3
 
-def updatesql(mysql,sql):
+def updatesql(mysql,sql,args):
 	flag = True
 	conn = mysql.connect()
 	cursor = conn.cursor()
 	try:
-		cursor.execute(sql)
+		cursor.execute(sql,args)
 		conn.commit()
 		print("update success")
 	except:
@@ -128,10 +128,10 @@ def updatesql(mysql,sql):
 	conn.close()
 	return flag
 
-def querysql(mysql,sql):
+def querysql(mysql,sql,args):
 	conn = mysql.connect()
 	cursor = conn.cursor()
-	cursor.execute(sql)
+	cursor.execute(sql,args)
 	results = cursor.fetchall()
 	cursor.close()
 	conn.close()
@@ -173,10 +173,13 @@ def querycourse():
 	depart = request.form.get('depart')
 
 	sql = 'select * from coursetable where '
+	args = []
 	if cid:
-		sql = sql + 'cid=\'%s\' and '%cid
+		args.append(cid)
+		sql = sql + 'cid=%s and '
 	if name:
-		sql = sql + 'name like \'%%%s%%\' and '%name
+		args.append(name)
+		sql = sql + "name like concat('%%',%s,'%%') and "
 	if use_time:
 		sql2 = '('
 		weekflag = ['mon','tue','wed','thu','fri','sat','sun']
@@ -185,9 +188,10 @@ def querycourse():
 		for i in range(7):
 			if week[i]:
 				if weektime[i]:
-					sql2 = sql2 + '%s=\'%s\' or '%(weekflag[i],weektime[i])
+					sql2 = sql2 + weekflag[i] + '=%s or '
+					args.append(weektime[i])
 				else :
-					sql2 = sql2 + '%s is not null or '%weekflag[i]
+					sql2 = sql2 + weekflag[i] + ' is not null or '
 
 		if sql2 == '(':
 			pass
@@ -195,18 +199,23 @@ def querycourse():
 			sql2 = sql2[:-4] + ') and '
 			sql = sql + sql2
 	if depart:
-		sql = sql + 'depart=\'%s\' and '%depart
+		sql = sql + 'depart=%s and '
+		args.append(depart)
 	if teacher:
-		sql = sql + 'teacher=\'%s\' and '%teacher
+		args.append(teacher)
+		sql = sql + 'teacher=%s and '
 	if category:
-		sql = sql + 'category=\'%s\' and '%category
+		args.append(category)
+		sql = sql + 'category=%s and '
 	if credit:
-		sql = sql + 'credit=%.1f and '%credit
+		args.append(credit)
+		sql = sql + 'credit=%s and '
 
-	sql = sql[:-4] + ';'
+	sql = sql[:-4]
 
-	results = querysql(mysql, sql)
-	
+	args = tuple(args)
+	results = querysql(mysql, sql, args)
+
 	courseinfo={}
 	title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
 	cnt = 0
@@ -255,8 +264,9 @@ def insertcourse():
 		if not i:
 			i = ''
 
-	sql = "insert into coursetable(cid,name,classnum,category,credit,chours,teacher,stucount,totalweek,mon,tue,wed,thu,fri,sat,sun,examtime,note,depart) values ('%s','%s','%d','%s',%.1f,%.1f,'%s',%d,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');"%(cid,name,classnum,category,credit,chours,teacher,stucount,totalweek,mon,tue,wed,thu,fri,sat,sun,examtime,note,depart);
-	result = updatesql(mysql, sql)
+	sql = "insert into coursetable(cid,name,classnum,category,credit,chours,teacher,stucount,totalweek,mon,tue,wed,thu,fri,sat,sun,examtime,note,depart) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+	args = (cid,name,classnum,category,credit,chours,teacher,stucount,totalweek,mon,tue,wed,thu,fri,sat,sun,examtime,note,depart)
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'insert success\n'
 	else:
@@ -277,8 +287,9 @@ def deletecourse():
 
 	cid = request.form.get('cid')
 
-	sql = "delete from coursetable where cid='%s';"%cid
-	result = updatesql(mysql, sql)
+	sql = "delete from coursetable where cid=%s"
+	args = (cid)
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'delete success\n'
 	else:
@@ -316,9 +327,10 @@ def updatecourse():
 	note = request.form.get('note')
 	depart = request.form.get('depart')
 
-	sql = "update coursetable set name='%s',classnum=%d,category='%s',credit=%.1f,chours=%.1f,teacher='%s',stucount=%d,totalweek='%s',mon='%s',tue='%s',wed='%s',thu='%s',fri='%s',sat='%s',sun='%s',examtime='%s',note='%s',depart='%s' where cid='%s';"%(name,classnum,category,credit,chours,teacher,stucount,totalweek,mon,tue,wed,thu,fri,sat,sun,examtime,note,depart,cid)
+	sql = "update coursetable set name=%s,classnum=%s,category=%s,credit=%s,chours=%s,teacher=%s,stucount=%s,totalweek=%s,mon=%s,tue=%s,wed=%s,thu=%s,fri=%s,sat=%s,sun=%s,examtime=%s,note=%s,depart=%s where cid=%s"
+	args = (name,classnum,category,credit,chours,teacher,stucount,totalweek,mon,tue,wed,thu,fri,sat,sun,examtime,note,depart,cid)
 
-	result = updatesql(mysql, sql)
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'update success\n'
 	else:
@@ -337,8 +349,9 @@ def querycommentbyuid():
 
 	uid = auth['uid']
 
-	sql = "select comment from commenttable where id=%d;"%uid
-	results = querysql(mysql, sql)
+	sql = "select comment from commenttable where id=%s"
+	args = (uid)
+	results = querysql(mysql, sql, args)
 	allinfo = {}
 	cnt = 0
 	for i in list(results):
@@ -358,8 +371,11 @@ def querycommentbycid():
 	uid = auth['uid']
 	cid = request.args.get('cid')
 
-	sql = "select comid,comment from commenttable where cid='%s';"%cid
-	results = querysql(mysql, sql)
+	sql = "select comid,comment from commenttable where cid=%s"
+	args = (cid)
+	results = querysql(mysql, sql, args)
+
+
 	commentinfo = {}
 	cnt = 0
 	for i in list(results):
@@ -381,9 +397,11 @@ def submitcomment():
 	cid = request.form.get('cid')
 	comment = request.form.get('comment')
 
-	sql = "insert into commenttable(id,cid,comment) values (%d,'%s','%s')"%(uid,cid,comment)
+	sql = "insert into commenttable(id,cid,comment) values (%s,%s,%s)"
+	args = (uid,cid,comment)
 	print sql
-	result = updatesql(mysql, sql)
+
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'insert success\n'
 	else:
@@ -402,10 +420,13 @@ def admindeletecomment():
 	if rk == 2:
 		return u"Permission Denied"
 
-	comid = request.form.get('comid')
+	comid = int(request.form.get('comid'))
 
-	sql = "delete from commenttable where comid=%s;"%comid
-	result = updatesql(mysql, sql)
+	sql = "delete from commenttable where comid=%s"
+	args = (comid)
+	print sql
+
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'delete success\n'
 	else:
@@ -421,10 +442,12 @@ def deletecomment():
 		return u'Invalid token. Please log in again.\n'
 
 	uid = auth['uid']
-	comid = request.form.get('comid')
+	comid = int(request.form.get('comid'))
 
-	sql = "delete from commenttable where id=%d and comid=%s;"%(uid,comid)
-	result = updatesql(mysql, sql)
+	sql = "delete from commenttable where id=%s and comid=%s"
+	args = (uid,comid)
+	print sql
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'delete success\n'
 	else:
@@ -444,11 +467,15 @@ def queryddl():
 	uid = auth['uid']
 	cid = request.form.get('cid')
 	if cid:
-		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%d and cid='%s' order by ddltime;"%(uid,cid)
+		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%s and cid=%s order by ddltime"
+		args = (uid,cid)
+		print sql
 	else:
-		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%d order by ddltime;"%uid
+		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%s order by ddltime"
+		args = (uid)
+		print sql
 
-	results = querysql(mysql, sql)
+	results = querysql(mysql, sql, args)
 	allinfo = {}
 	cnt = 0
 	for i in list(results):
@@ -474,8 +501,11 @@ def insertddl():
 	ddltime = request.form.get('ddltime')
 	ddlstate = int(request.form.get('ddlstate'))
 
-	sql = "insert into ddltable (id,cid,ddlcontent,ddltime,ddlstate) values (%d,'%s','%s','%s',%d);"%(uid,cid,ddlcontent,ddltime,ddlstate)
-	result = updatesql(mysql, sql)
+	sql = "insert into ddltable (id,cid,ddlcontent,ddltime,ddlstate) values (%s,%s,%s,%s,%s)"
+	args = (uid,cid,ddlcontent,ddltime,ddlstate)
+	print sql
+
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'insert success\n'
 	else:
@@ -494,8 +524,10 @@ def updatestate():
 	ddlid = int(request.form.get('ddlid'))
 	ddlstate = int(request.form.get('ddlstate'))
 
-	sql = "update ddltable set ddlstate=%d where ddlid=%d and id=%d;"%(ddlstate,ddlid,uid)
-	result = updatesql(mysql, sql)
+	sql = "update ddltable set ddlstate=%s where ddlid=%s and id=%s"
+	args = (ddlstate,ddlid,uid)
+	print sql
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'update success\n'
 	else:
@@ -515,9 +547,11 @@ def updateddlinfo():
 	ddlcontent = request.form.get('ddlcontent')
 	ddltime = request.form.get('ddltime')
 
-	sql = "update ddltable set ddlcontent='%s' , ddltime='%s' where ddlid=%d and id=%d;"%(ddlcontent,ddltime,ddlid,uid)
+	sql = "update ddltable set ddlcontent=%s , ddltime=%s where ddlid=%s and id=%s"
+	args = (ddlcontent,ddltime,ddlid,uid)
 	print sql
-	result = updatesql(mysql, sql)
+
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'update success\n'
 	else:
@@ -536,8 +570,11 @@ def deleteddl():
 	uid = auth['uid']
 	ddlid = int(request.form.get('ddlid'))
 
-	sql = "delete from ddltable where id=%d and ddlid='%s';"%(uid,ddlid)
-	result = updatesql(mysql, sql)
+	sql = "delete from ddltable where id=%s and ddlid=%s"
+	args = (uid,ddlid)
+	print sql
+
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'delete success\n'
 	else:
@@ -557,8 +594,10 @@ def insertusrcou():
 	uid = auth['uid']
 	cid = request.form.get('cid')
 
-	sql = "insert into usrcoutable (id,cid) values (%d,'%s');"%(uid,cid)
-	result = updatesql(mysql, sql)
+	sql = "insert into usrcoutable (id,cid) values (%s,%s)"
+	args = (uid,cid)
+	print sql
+	result = updatesql(mysql, sql, args)
 	if result:
 		return u'insert success\n'
 	else:
@@ -575,11 +614,13 @@ def queryusrcou():
 		return u'Invalid token. Please log in again.\n'
 
 	uid = auth['uid']
-	sql = "select cid from usrcoutable where id=%d;"%uid
+	sql = "select cid from usrcoutable where id=%s"
+	args = (uid)
+	print sql
 	
 	allinfo = {}
 
-	results = querysql(mysql, sql)
+	results = querysql(mysql, sql, args)
 	cnt = 0
 	for i in list(results):
 		oneinfo = list(i)
@@ -602,10 +643,14 @@ def deleteusrcou():
 	uid = auth['uid']
 	cid = request.form.get('cid')
 
-	sql1="DELETE FROM usrcoutable WHERE id = %s AND cid = '%s' ;"%(uid,cid)
-	result1 = updatesql(mysql, sql1)
-	sql2="DELETE FROM ddltable WHERE id = %s AND cid = '%s' ;"%(uid,cid)
-	result2 = updatesql(mysql, sql2)
+	sql1="DELETE FROM usrcoutable WHERE id = %s AND cid = %s"
+	args = (uid,cid)
+	print sql
+	result1 = updatesql(mysql, sql1, args)
+	sql2="DELETE FROM ddltable WHERE id = %s AND cid = %s"
+	args = (uid,cid)
+	print sql
+	result2 = updatesql(mysql, sql2, args)
 	if result1 and result2:
 		return u'delete success\n'
 	elif result1 and (result2==False):
