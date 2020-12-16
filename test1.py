@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flaskext.mysql import MySQL
 import json
 import os
+import datetime
+import jwt
 
 mysql = MySQL()
 app = Flask(__name__)
@@ -28,11 +30,8 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True
 userdb=SQLAlchemy(app)
 
-# 用户登录时会创建一个token
-# token 格式：uid:[token,权限]
-# eg: {1:[234982692374,1],2:[...,...]}
-
-tokendict = {}
+# token key
+app.config['SECRET_KEY'] = "\xd3\x82\xa9JD\x0b\xdc?\xb9\x8f2\xa0\xe4\xd2\xa9\xac\x94]/\x1d\r\x841'"
 
 class userInfoTable(userdb.Model):
     __tablename__='userinfo'
@@ -77,6 +76,42 @@ class userInfoTable(userdb.Model):
 	'suti':'1-2',
 	'depart':'艺术学院' #下拉选项，跟选课网一样
 '''
+def encode_auth_token(user_id,rk):
+    """
+    Generates the Auth Token
+    :return: string
+    """
+    try:
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, hours=1),
+            'iat': datetime.datetime.utcnow(),
+            'uid': user_id,
+            'rk' : rk
+        }
+        return jwt.encode(
+            payload,
+            app.config.get('SECRET_KEY'),
+            algorithm='HS256'
+        )
+    except Exception as e:
+        print(e)
+
+def decode_auth_token(auth_token):
+    """
+    Decodes the auth token
+    :param auth_token:
+    :return: dict
+    """
+    try:
+        payload = jwt.decode(auth_token, app.config.get('SECRET_KEY'))
+        return payload
+    except jwt.ExpiredSignatureError:
+        print 'Signature expired. Please log in again.\n'
+        return 2
+    except jwt.InvalidTokenError:
+        print 'Invalid token. Please log in again.\n'
+        return 3
+
 def updatesql(mysql,sql):
 	flag = True
 	conn = mysql.connect()
@@ -109,6 +144,12 @@ def test():
 # 查询功能
 @app.route('/querycourse',methods=['POST'])
 def querycourse():
+	auth_token = request.form.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
 	cid = request.form.get('cid')
 	name = request.form.get('name')
 	category = request.form.get('category')
@@ -180,6 +221,16 @@ def querycourse():
 
 @app.route('/admin/insertinfo',methods=['POST'])
 def insertcourse():
+	auth_token = request.form.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+	rk = auth['rk']
+	if rk == 2:
+		return u"Permission Denied"
+
 	cid = request.form.get('cid')
 	name = request.form.get('name')
 	classnum = int(request.form.get('classnum'))
@@ -214,6 +265,16 @@ def insertcourse():
 #必须提供课程号
 @app.route('/admin/deleteinfo',methods=['POST'])
 def deletecourse():
+	auth_token = request.form.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+	rk = auth['rk']
+	if rk == 2:
+		return u"Permission Denied"
+
 	cid = request.form.get('cid')
 
 	sql = "delete from coursetable where cid='%s';"%cid
@@ -225,6 +286,16 @@ def deletecourse():
 
 @app.route('/admin/updateinfo',methods=['POST'])
 def updatecourse():
+	auth_token = request.form.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+	rk = auth['rk']
+	if rk == 2:
+		return u"Permission Denied"
+		
 	cid = request.form.get('cid')
 	name = request.form.get('name')
 	classnum = int(request.form.get('classnum'))
@@ -257,9 +328,16 @@ def updatecourse():
 
 @app.route('/comment/querybyuid',methods=['GET'])
 def querycommentbyuid():
-	uid = request.args.get('uid')
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
 
-	sql = "select comment from commenttable where id=%s;"%uid
+	uid = auth['uid']
+
+	sql = "select comment from commenttable where id=%d;"%uid
 	results = querysql(mysql, sql)
 	allinfo = {}
 	cnt = 0
@@ -270,6 +348,14 @@ def querycommentbyuid():
 
 @app.route('/comment/querybycid',methods=['GET'])
 def querycommentbycid():
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	cid = request.args.get('cid')
 
 	sql = "select comid,comment from commenttable where cid='%s';"%cid
@@ -284,7 +370,14 @@ def querycommentbycid():
 @app.route('/comment/submitcomm',methods=['POST'])
 def submitcomment():
 	# 加入身份认证
-	uid = int(request.form.get('uid'))
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	cid = request.form.get('cid')
 	comment = request.form.get('comment')
 
@@ -299,6 +392,16 @@ def submitcomment():
 
 @app.route('/admin/deletecomment',methods=['POST'])
 def admindeletecomment():
+	auth_token = request.form.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+	rk = auth['rk']
+	if rk == 2:
+		return u"Permission Denied"
+
 	comid = request.form.get('comid')
 
 	sql = "delete from commenttable where comid=%s;"%comid
@@ -310,9 +413,17 @@ def admindeletecomment():
 
 @app.route('/comment/deletecomment',methods=['POST'])
 def deletecomment():
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	comid = request.form.get('comid')
 
-	sql = "delete from commenttable where comid=%s;"%comid
+	sql = "delete from commenttable where id=%d and comid=%s;"%(uid,comid)
 	result = updatesql(mysql, sql)
 	if result:
 		return u'delete success\n'
@@ -323,12 +434,19 @@ def deletecomment():
 
 @app.route('/ddl/queryddl',methods=['POST'])
 def queryddl():
-	uid = request.form.get('uid')
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	cid = request.form.get('cid')
 	if cid:
-		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%s and cid='%s' order by ddltime;"%(uid,cid)
+		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%d and cid='%s' order by ddltime;"%(uid,cid)
 	else:
-		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%s order by ddltime;"%uid
+		sql = "select ddlid,id,ddlcontent,ddltime,ddlstate from ddltable where id=%d order by ddltime;"%uid
 
 	results = querysql(mysql, sql)
 	allinfo = {}
@@ -343,7 +461,14 @@ def queryddl():
 @app.route('/ddl/insertddl',methods=['POST'])
 def insertddl():
 	# 加入身份认证
-	uid = int(request.form.get('uid'))
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	cid = request.form.get('cid')
 	ddlcontent = request.form.get('ddlcontent')
 	ddltime = request.form.get('ddltime')
@@ -358,10 +483,18 @@ def insertddl():
 
 @app.route('/ddl/updatestate',methods=['POST'])
 def updatestate():
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	ddlid = int(request.form.get('ddlid'))
 	ddlstate = int(request.form.get('ddlstate'))
 
-	sql = "update ddltable set ddlstate=%d where ddlid=%d;"%(ddlstate,ddlid)
+	sql = "update ddltable set ddlstate=%d where ddlid=%d and id=%d;"%(ddlstate,ddlid,uid)
 	result = updatesql(mysql, sql)
 	if result:
 		return u'update success\n'
@@ -370,11 +503,19 @@ def updatestate():
 
 @app.route('/ddl/updateddlinfo',methods=['POST'])
 def updateddlinfo():
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	ddlid = int(request.form.get('ddlid'))
 	ddlcontent = request.form.get('ddlcontent')
 	ddltime = request.form.get('ddltime')
 
-	sql = "update ddltable set ddlcontent='%s' , ddltime='%s' where ddlid=%d;"%(ddlcontent,ddltime,ddlid)
+	sql = "update ddltable set ddlcontent='%s' , ddltime='%s' where ddlid=%d and id=%d;"%(ddlcontent,ddltime,ddlid,uid)
 	print sql
 	result = updatesql(mysql, sql)
 	if result:
@@ -385,9 +526,17 @@ def updateddlinfo():
 
 @app.route('/ddl/deleteddl',methods=['POST'])
 def deleteddl():
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	ddlid = int(request.form.get('ddlid'))
 
-	sql = "delete from ddltable where ddlid='%s';"%ddlid
+	sql = "delete from ddltable where id=%d and ddlid='%s';"%(uid,ddlid)
 	result = updatesql(mysql, sql)
 	if result:
 		return u'delete success\n'
@@ -398,7 +547,14 @@ def deleteddl():
 @app.route('/usrcou/insertusrcou',methods=['POST'])
 def insertusrcou():
 	# 加入身份认证
-	uid = int(request.form.get('uid'))
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	cid = request.form.get('cid')
 
 	sql = "insert into usrcoutable (id,cid) values (%d,'%s');"%(uid,cid)
@@ -411,7 +567,14 @@ def insertusrcou():
 
 @app.route('/usrcou/queryusrcou',methods=['POST'])
 def queryusrcou():
-	uid = int(request.form.get('uid'))
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	sql = "select cid from usrcoutable where id=%d;"%uid
 	
 	allinfo = {}
@@ -429,7 +592,14 @@ def queryusrcou():
 @app.route('/usrcou/deleteusrcou',methods=['POST'])
 def deleteusrcou():
 	# 加入身份认证
-	uid = int(request.form.get('id'))
+	auth_token = request.args.get('token')
+	auth = decode_auth_token(auth_token)
+	if auth == 2:
+		return u'Signature expired. Please log in again.\n'
+	if auth == 3:
+		return u'Invalid token. Please log in again.\n'
+
+	uid = auth['uid']
 	cid = request.form.get('cid')
 
 	sql1="DELETE FROM usrcoutable WHERE id = %s AND cid = '%s' ;"%(uid,cid)
