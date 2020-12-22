@@ -15,21 +15,20 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.electiver.R;
 
 public class ElectiveAssistantFragment extends Fragment {
-
-    private ElectiveAssistantViewModel electiveassistantViewModel;
+    View view;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        electiveassistantViewModel =
-                new ViewModelProvider(this).get(ElectiveAssistantViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_account, container, false);
-        final TextView textView = root.findViewById(R.id.text_account);
+        //electiveassistantViewModel =
+         //       new ViewModelProvider(this).get(ElectiveAssistantViewModel.class);
+        view = inflater.inflate(R.layout.fragment_account, container, false);
+       /* final TextView textView = root.findViewById(R.id.text_account);
         electiveassistantViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
-        return root;
+        });*/
+        return view;
     }
 }

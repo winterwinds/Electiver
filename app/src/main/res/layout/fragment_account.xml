@@ -5,19 +5,85 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.account.AccountFragment">
-
    <TextView
        android:id="@+id/text_account"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_marginStart="8dp"
-       android:layout_marginTop="8dp"
-       android:layout_marginEnd="8dp"
-       android:textAlignment="center"
-       android:textSize="20sp"
-       app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintTop_toTopOf="parent"
-       android:gravity="center_horizontal" />
+       android:layout_height="match_parent"/>
+   <ScrollView
+       android:id="@+id/account_scroll"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:background="@color/white"
+       android:visibility="visible"
+       tools:visibility="visible">
+
+      <HorizontalScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+         <FrameLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/account_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/log_out"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.89" />
+            <TextView
+                android:id="@+id/account_username"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:gravity="top"
+                android:layout_marginTop="50dp"
+                app:layout_constraintBottom_toBottomOf="@id/account_logout"
+                app:layout_constraintTop_toTopOf="@id/account_logout"
+                app:layout_constraintStart_toStartOf="@id/account_logout"
+                app:layout_constraintEnd_toEndOf="@id/account_logout" />
+            <TextView
+                android:id="@+id/account_grade"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:gravity="top"
+                android:layout_marginTop="100dp"
+                app:layout_constraintBottom_toBottomOf="@id/account_logout"
+                app:layout_constraintTop_toTopOf="@id/account_logout"
+                app:layout_constraintStart_toStartOf="@id/account_logout"
+                app:layout_constraintEnd_toEndOf="@id/account_logout" />
+            <TextView
+                android:id="@+id/account_department"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:gravity="top"
+                android:layout_marginTop="150dp"
+                app:layout_constraintBottom_toBottomOf="@id/account_logout"
+                app:layout_constraintTop_toTopOf="@id/account_logout"
+                app:layout_constraintStart_toStartOf="@id/account_logout"
+                app:layout_constraintEnd_toEndOf="@id/account_logout" />
+            <TextView
+                android:id="@+id/account_major"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:gravity="top"
+                android:layout_marginTop="200dp"
+                app:layout_constraintBottom_toBottomOf="@id/account_logout"
+                app:layout_constraintTop_toTopOf="@id/account_logout"
+                app:layout_constraintStart_toStartOf="@id/account_logout"
+                app:layout_constraintEnd_toEndOf="@id/account_logout" />
+         </FrameLayout>
+      </HorizontalScrollView>
+   </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

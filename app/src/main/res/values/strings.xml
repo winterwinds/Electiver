@@ -16,6 +16,7 @@
     <string name="register_ensurepassword">请再次输入密码</string>
     <string name="department">院系</string>
     <string name="major">专业</string>
+    <string name="grade">年级</string>
     <!-- schedule fragment -->
     <string name="text_mon">星期一</string>
     <string name="text_tues">星期二</string>
