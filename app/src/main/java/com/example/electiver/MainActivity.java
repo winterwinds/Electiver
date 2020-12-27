@@ -1,7 +1,10 @@
 package com.example.electiver;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +29,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class MainActivity extends AppCompatActivity {
@@ -85,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -96,10 +104,44 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
 
         init();
+       // initTimeOccupy();
     }
     public void init(){
-        Log.d("checkMain","enter init");
-        SharedPreferences firstuse = getSharedPreferences("loginInfo", MODE_PRIVATE);
+
+        SharedPreferences checkToken = getSharedPreferences("loginInfo", MODE_PRIVATE);
+        String getToken = checkToken.getString("Token","null");
+        Log.d("checkToken",getToken);
+
+        final Message[] msg = new Message[1];
+        if(!getToken.equals("null")){
+            HttpThread thread = new HttpThread(){
+                @Override
+                public void run(){
+                    msg[0] = Message.obtain();
+                    String ifTokenOK = doQueryComment(getToken);
+                    if(ifTokenOK.equals("Signature expired. Please log in again.")){
+                        msg[0].what=0x01;
+                    }else if(ifTokenOK.equals("Invalid token. Please log in again.")){
+                        msg[0].what=0x01;
+                    }else{
+                        msg[0].what=0x02;
+                    }
+                    myHandler.sendMessage(msg[0]);
+                }
+            };
+            thread.start();
+            try{
+                thread.join(4000);
+                if(msg[0]==null || msg[0].what==0x01){
+                    reLogin();
+                }
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+
+
+       /* SharedPreferences firstuse = getSharedPreferences("loginInfo", MODE_PRIVATE);
         isFirstUse = firstuse.getBoolean("isLogin", false);
         if(!isFirstUse) {
             SharedPreferences.Editor editor = firstuse.edit();
@@ -119,7 +161,59 @@ public class MainActivity extends AppCompatActivity {
             Department = firstuse.getString("Department", "none");
             Major = firstuse.getString("Major", "none");
             Token = firstuse.getString("Token","none");
+        }*/
+    }
+
+    public void initTimeOccupy(){
+        SharedPreferences occupyTime=getSharedPreferences("timeAvail",MODE_PRIVATE);
+        SharedPreferences.Editor editor = occupyTime.edit();
+        String possibledays[] ={"mon","tue","wed","thu","fri","sat","sun"};
+        String possibletime[] ={"1-2","3-4","5-6","7-8","10-11"};
+        for(int i=0;i<possibledays.length;i++){
+            for(int j=0;j<possibletime.length;j++){
+                String timetag = possibledays[i]+possibletime[j];
+                editor.putString(timetag,"false");
+            }
         }
+        editor.commit();
+    }
+    /*
+        重新登陆，清空本地存储的所有信息，并弹出登录界面。
+     */
+    public void reLogin(){
+        SharedPreferences getUserInfo = getSharedPreferences("loginInfo",MODE_PRIVATE);
+        SharedPreferences.Editor editor=getUserInfo.edit();
+        editor.clear();
+        editor.commit();
+        SharedPreferences getCourseInfo = getSharedPreferences("courseInfo",MODE_PRIVATE);
+        editor=getCourseInfo.edit();
+        editor.clear();
+        editor.commit();
+
+        initTimeOccupy();
+
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, LoginActivity.class);
+        startActivityForResult(intent, 1);
+
+      /*  SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
+        try{
+            JSONObject json = new JSONObject(saveinfo.getString("roughInfo","{}"));
+
+            String getToken=json.getString("token");
+            String getGrade = json.getString("grade");
+            String getDepart = json.getString("department");
+            String getMajor = json.getString("major");
+            editor = saveinfo.edit();
+            editor.putString("Token", getToken);
+            editor.putString("Grade", getGrade);
+            editor.putString("Department",getDepart);
+            editor.putString("Major", getMajor);
+            editor.commit();
+
+        }catch(JSONException e){
+            e.printStackTrace();
+        }*/
     }
 
     public String getUserName(){ return UserName; }
@@ -133,8 +227,25 @@ public class MainActivity extends AppCompatActivity {
         return str;
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+        if(data!=null){
+            SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
+            String roughInfo = saveinfo.getString("roughInfo","null");
+            if(!roughInfo.equals("null")){
+                try{
+                    JSONObject json = new JSONObject(roughInfo);
+                    Token = json.getString("token");
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+            SharedPreferences.Editor editor = saveinfo.edit();
+            editor.putString("Token",Token);
+            editor.commit();
+
+        }else{
+            Log.d("bundle","nodatatomain");
+        }
     }
 
     static class MyHandler extends Handler{
@@ -147,7 +258,10 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg){
             MainActivity theActivity = mActivity.get();
             switch(msg.what){
-                case 0x0001:
+                case 0x01:
+
+                    break;
+                case 0x02:
                     break;
                 default:
                     break;

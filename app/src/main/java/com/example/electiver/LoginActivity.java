@@ -24,14 +24,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 public class LoginActivity extends AppCompatActivity {
     private String userName,psw,spPsw;//获取的用户名，密码，加密密码
     private EditText et_user_name,et_psw;//编辑框
-    private String token;
-    public String Grade, Department, Major, UserName;
+    public String UserName;
+    public String Grade, Department, Major, Token;
 
     LoginActivity.MyHandler myHandler = new LoginActivity.MyHandler(this);
     @Override
@@ -69,49 +72,53 @@ public class LoginActivity extends AppCompatActivity {
                 String md5Psw = MD5Utils.md5(psw);
 
                 Intent data = new Intent();
-                data.putExtra("isLogin", true);
-                data.putExtra("userName", userName);
-                data.putExtra("grade",Grade);
-                data.putExtra("department",Department);
-                data.putExtra("major",Major);
-                setResult(1, data);
+                data.putExtra("UserName", userName);
+                data.putExtra("Grade",Grade);
+                data.putExtra("Department", Department);
+                data.putExtra("Major", Major);
+                setResult(1,data);
+
+                //保存用户名
+                SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
+                SharedPreferences.Editor editor = saveinfo.edit();
+                editor.putString("UserName",userName);
+                editor.commit();
 
                 if (TextUtils.isEmpty(userName)) {
                     Toast.makeText(LoginActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(psw)) {
                     Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                 } else{
-                    String url="http://47.92.240.179:5001/user/enroll";
-                    new HttpThread(url, userName, md5Psw){
+                    final Message[] msg = new Message[1];
+                    HttpThread thread = new HttpThread(){
                         @Override
                         public void run(){
-                            Message msg = Message.obtain();
+                            msg[0] = Message.obtain();
                             try{
-                                String res=doPost();
+                                String res=doLogin(userName,md5Psw);
                                 if(res.equals("password wrong")){
-                                    msg.what=0x01;
-                                    msg.obj=res;
+                                    msg[0].what=0x01;
+                                    msg[0].obj=res;
                                 }else if(res.equals("this username not exist")){
-                                    msg.what=0x02;
-                                    msg.obj=res;
+                                    msg[0].what=0x02;
+                                    msg[0].obj=res;
                                 }else{
-                                    msg.what=0x03;
-                                    msg.obj=res;
-                                    SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = saveinfo.edit();
-                                    editor.putString("Token",res);
+                                    msg[0].what=0x03;
+                                    msg[0].obj=res;
+
+                                    editor.putString("roughInfo",res);
                                     editor.commit();
-                                    token=res;
+                                    Log.d("LoginOutput", res);
                                 }
                             }catch(IOException e){
                                 e.printStackTrace();
-                                msg.what=0x04;
-                                msg.obj="error happen";
+                                msg[0].what=0x04;
+                                msg[0].obj="error happen";
                             }
-                            myHandler.sendMessage(msg);
+                            myHandler.sendMessage(msg[0]);
                         }
-                    }.start();
-
+                    };
+                    thread.start();
                 }
             }
         });
@@ -136,15 +143,24 @@ public class LoginActivity extends AppCompatActivity {
             //是获取注册界面回传过来的用户名
             // getExtra().getString("***");
             UserName = data.getStringExtra("userName");
-            Grade = data.getStringExtra("grade");
-            Department = data.getStringExtra("department");
-            Major = data.getStringExtra("major");
+            Department = data.getStringExtra("Department");
+            Major = data.getStringExtra("Major");
+            Grade = data.getStringExtra("Grade");
+
             if(!TextUtils.isEmpty(UserName)){
                 //设置用户名到 et_user_name 控件
                 et_user_name.setText(UserName);
                 //et_user_name控件的setSelection()方法来设置光标位置
                 et_user_name.setSelection(UserName.length());
             }
+            //保存用户信息
+            SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
+            SharedPreferences.Editor editor = saveinfo.edit();
+            editor.putString("Department",Department);
+            editor.putString("Major",Major);
+            editor.putString("Grade",Grade);
+            editor.commit();
+
         }else{
             Log.d("bundle","nodatatologin");
         }

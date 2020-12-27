@@ -6,26 +6,99 @@
     android:layout_height="match_parent"
     tools:context=".ui.electiveassistant.ElectiveAssistantFragment">
 
-    <ScrollView
+    <LinearLayout
+        android:id="@+id/assistant_searchOnCate"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:visibility="visible"
-        tools:visibility="visible">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="4dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="按类别搜索"
+            android:textSize="15sp"/>
+        <Spinner
+            android:id="@+id/spin_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:layout_marginLeft="10dp"
+            android:entries="@array/courseCategory"/>
+        <Spinner
+            android:id="@+id/spin_coursedepart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:entries="@array/courseDepartment"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/assistant_searchOnName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/assistant_searchOnCate">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="按名称搜索"
+            android:textSize="15sp"/>
+        <EditText
+            android:id="@+id/search_on_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:singleLine="true"
+            android:hint="支持模糊搜索"/>
+        <Button
+            android:id="@+id/assis_search"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:text="@string/start_search"
+            android:background="@drawable/assistan_btn"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="7dp"/>
+        <Button
+            android:id="@+id/assis_search_end"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:text="@string/end_search"
+            android:textSize="10sp"
+            android:layout_marginLeft="10dp"/>
 
-        <HorizontalScrollView
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/assistant_scrollList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/assistant_searchOnName"
+        android:background="@color/white">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
-            <FrameLayout
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/swipe_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/title_elective_assistant"
-                    android:textSize="30dp"/>
-
-            </FrameLayout>
-        </HorizontalScrollView>
+            </ListView>
+        </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

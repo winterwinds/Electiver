@@ -134,14 +134,10 @@ public class RegisterActivity extends AppCompatActivity  {
                 getEditString();
                 Intent data = new Intent();
                 data.putExtra("userName", userName);
+                data.putExtra("Grade",Grade);
+                data.putExtra("Department",Department);
+                data.putExtra("Major", Major);
                 setResult(1, data);
-                SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
-                SharedPreferences.Editor editor = saveinfo.edit();
-                editor.putString("UserName",userName);
-                editor.putString("Grade", Grade);
-                editor.putString("Department", Department);
-                editor.putString("Major", Major);
-                editor.commit();
 
                 if(TextUtils.isEmpty(userName)){
                     Toast.makeText(RegisterActivity.this, "请输入用户名",
@@ -161,7 +157,7 @@ public class RegisterActivity extends AppCompatActivity  {
 
 
                     String url="http://47.92.240.179:5001/user/register";
-                    new HttpThread(url, userName, md5Psw){
+                    new HttpThread(url, userName, md5Psw, Grade, Department, Major){
                         @Override
                         public void run(){
                             Message msg = Message.obtain();

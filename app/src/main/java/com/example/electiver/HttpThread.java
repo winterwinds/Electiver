@@ -52,12 +52,15 @@ public class HttpThread extends Thread{
     URL url;
     String username;
     String password;
+    String grade;
+    String department;
+    String major;
 
     /*------------------------------
        仅注册和登陆需要用到的注册函数
      -------------------------------*/
 
-    public HttpThread(String url, String username, String password){
+    public HttpThread(String url, String username, String password, String grade, String depart, String major){
         try{
             this.url = new URL(url);
         }catch(MalformedURLException e){
@@ -65,6 +68,9 @@ public class HttpThread extends Thread{
         }
         this.username = username;
         this.password = password;
+        this.grade = grade;
+        this.department = depart;
+        this.major = major;
 
     }
 
@@ -77,8 +83,8 @@ public class HttpThread extends Thread{
     }
 
     /*------------------------------
-        登陆和注册
-        需要用户名和密码作为参数（写在构造函数里）
+        注册
+        需要用户名、密码、年级、专业、院系作为参数（写在构造函数里）
         连接失败会在Logcat中打印提示。Tag: doPost
         成功返回字符串。
      -------------------------------*/
@@ -91,7 +97,45 @@ public class HttpThread extends Thread{
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
             String data = "username="+username+"&password="+password;
+            data += "&major="+major+"&department="+department+"&grade="+grade;
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            con.setUseCaches(false);
+            con.getOutputStream().write(data.getBytes("UTF-8"));
+            con.getInputStream();
+            Log.d("signUp",String.valueOf(con.getResponseCode()));
+            if(con.getResponseCode()==200) {
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = reader.readLine();
+                if(reader != null){
+                    try{
+                        reader.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            } else{
+                Log.d("doPost","responseCode error");
+            }
+            getresult=con.getResponseCode();
+        }catch(MalformedURLException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public String doLogin(String userName, String passWord)throws IOException{
+        String result = "";
+        BufferedReader reader = null;
+        int getresult=0;
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
+                detectDiskWrites().detectNetwork().penaltyLog().build());
+        try{
+            String myurl = "http://47.92.240.179:5001/user/enroll";
+            URL MyUrl = new URL(myurl);
+            String data = "username="+userName+"&password="+passWord;
+            HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
             con.setRequestMethod("POST");
             con.setDoOutput(true);
             con.setUseCaches(false);
@@ -609,7 +653,7 @@ public class HttpThread extends Thread{
         成功返回cid
      -------------------------------*/
 
-    public String doQueryCourse(String token){
+    public String doQueryMyCourse(String token){
         int getresult=0;
         String result = "";
         BufferedReader reader = null;
