@@ -1201,7 +1201,12 @@ def recom():
 	get_type(request.form.get('type1'),request.form.get('type2'))
 
 	result = {}
-	result['classes'] = sum_recommend(recommend())
+	lst = sum_recommend(recommend())
+	cnt = 0
+	for i in lst:
+		# print(i)
+		result[str(cnt)] = i[0]
+		cnt += 1
 	return json.dumps(result)
 # In[ ]:
 
