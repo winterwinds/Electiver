@@ -987,7 +987,7 @@ def register():
 	return 'register successs'
 
 #作者：刘竟择
-@app.route('/usrcou/queryallusrcou',methods=['POST'])
+# @app.route('/usrcou/queryallusrcou',methods=['POST'])
 def queryallusrcou():
 
 	sql = "select id from oldusrcoutable"
