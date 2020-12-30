@@ -34,6 +34,7 @@ userdb=SQLAlchemy(app)
 # token key
 app.config['SECRET_KEY'] = "\xd3\x82\xa9JD\x0b\xdc?\xb9\x8f2\xa0\xe4\xd2\xa9\xac\x94]/\x1d\r\x841'"
 
+#作者：刘竟择
 class userInfoTable(userdb.Model):
 	__tablename__='userinfo'
 	id=userdb.Column(userdb.Integer,primary_key=True)
@@ -80,6 +81,8 @@ class userInfoTable(userdb.Model):
 	'suti':'1-2',
 	'depart':'艺术学院' #下拉选项，跟选课网一样
 '''
+
+#作者：司昊田
 def encode_auth_token(user_id,rk):
 	"""
 	Generates the Auth Token
@@ -100,6 +103,7 @@ def encode_auth_token(user_id,rk):
 	except Exception as e:
 		print(e)
 
+#作者：司昊田
 def decode_auth_token(auth_token):
 	"""
 	Decodes the auth token
@@ -116,6 +120,7 @@ def decode_auth_token(auth_token):
 		print 'Invalid token. Please log in again.\n'
 		return 3
 
+#作者：司昊田
 def updatesql(mysql,sql,args):
 	flag = True
 	conn = mysql.connect()
@@ -132,6 +137,7 @@ def updatesql(mysql,sql,args):
 	conn.close()
 	return flag
 
+#作者：司昊田
 def querysql(mysql,sql,args):
 	conn = mysql.connect()
 	cursor = conn.cursor()
@@ -141,6 +147,7 @@ def querysql(mysql,sql,args):
 	conn.close()
 	return results
 
+#作者：司昊田
 @app.route('/')
 def test():
 	return '服务器正常运行'
