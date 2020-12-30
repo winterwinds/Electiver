@@ -145,6 +145,7 @@ def querysql(mysql,sql,args):
 def test():
 	return '服务器正常运行'
 
+#作者：司昊田
 # 查询功能
 @app.route('/querycourse',methods=['POST'])
 def querycourse():
@@ -240,7 +241,7 @@ def querycourse():
 
 
 # 管理员操作，增加、删除、修改
-
+#作者：司昊田
 @app.route('/admin/insertinfo',methods=['POST'])
 def insertcourse():
 	auth_token = request.form.get('token')
@@ -285,6 +286,7 @@ def insertcourse():
 	else:
 		return u'insert fail\n'
 
+#作者：司昊田
 #必须提供课程号
 @app.route('/admin/deleteinfo',methods=['POST'])
 def deletecourse():
@@ -308,6 +310,7 @@ def deletecourse():
 	else:
 		return u'delete fail\n'
 
+#作者：司昊田
 @app.route('/admin/updateinfo',methods=['POST'])
 def updatecourse():
 	auth_token = request.form.get('token')
@@ -350,7 +353,7 @@ def updatecourse():
 		return u'update fail\n'
 
 
-
+#作者：司昊田
 @app.route('/comment/querybyuid',methods=['GET'])
 def querycommentbyuid():
 	auth_token = request.args.get('token')
@@ -372,6 +375,7 @@ def querycommentbyuid():
 		cnt += 1
 	return json.dumps(allinfo)
 
+#作者：司昊田
 @app.route('/comment/querybycid',methods=['GET'])
 def querycommentbycid():
 	auth_token = request.args.get('token')
@@ -396,6 +400,7 @@ def querycommentbycid():
 		cnt += 1
 	return json.dumps(commentinfo)
 
+#作者：司昊田
 @app.route('/comment/submitcomm',methods=['POST'])
 def submitcomment():
 	# 加入身份认证
@@ -420,7 +425,7 @@ def submitcomment():
 	else:
 		return u'insert fail\n'
 
-
+#作者：司昊田
 @app.route('/admin/deletecomment',methods=['POST'])
 def admindeletecomment():
 	auth_token = request.form.get('token')
@@ -444,7 +449,7 @@ def admindeletecomment():
 		return u'delete success\n'
 	else:
 		return u'delete fail\n'
-
+#作者：司昊田
 @app.route('/comment/deletecomment',methods=['POST'])
 def deletecomment():
 	auth_token = request.form.get('token')
@@ -467,7 +472,7 @@ def deletecomment():
 		return u'delete fail\n'
 
 
-
+#作者：司昊田
 @app.route('/ddl/queryddl',methods=['POST'])
 def queryddl():
 	auth_token = request.form.get('token')
@@ -497,7 +502,7 @@ def queryddl():
 		cnt += 1
 	return json.dumps(allinfo)
 
-
+#作者：司昊田
 @app.route('/ddl/insertddl',methods=['POST'])
 def insertddl():
 	# 加入身份认证
@@ -524,6 +529,7 @@ def insertddl():
 	else:
 		return u'insert fail\n'
 
+#作者：司昊田
 @app.route('/ddl/updatestate',methods=['POST'])
 def updatestate():
 	auth_token = request.form.get('token')
@@ -546,6 +552,7 @@ def updatestate():
 	else:
 		return u'update fail\n'
 
+#作者：司昊田
 @app.route('/ddl/updateddlinfo',methods=['POST'])
 def updateddlinfo():
 	auth_token = request.form.get('token')
@@ -570,7 +577,7 @@ def updateddlinfo():
 	else:
 		return u'update fail\n'
 
-
+#作者：司昊田
 @app.route('/ddl/deleteddl',methods=['POST'])
 def deleteddl():
 	auth_token = request.form.get('token')
@@ -593,7 +600,7 @@ def deleteddl():
 	else:
 		return u'delete fail\n'
 
-
+#作者：司昊田
 @app.route('/usrcou/insertusrcou',methods=['POST'])
 def insertusrcou():
 	# 加入身份认证
@@ -616,7 +623,7 @@ def insertusrcou():
 	else:
 		return u'insert fail\n'
 
-
+#作者：司昊田
 @app.route('/usrcou/queryusrcou',methods=['POST'])
 def queryusrcou():
 	auth_token = request.form.get('token')
@@ -642,7 +649,7 @@ def queryusrcou():
 	return json.dumps(allinfo)
 
 
-
+#作者：刘竟择
 @app.route('/usrcou/deleteusrcou',methods=['POST'])
 def deleteusrcou():
 	# 加入身份认证
@@ -674,7 +681,7 @@ def deleteusrcou():
 		return u'delete ddl and usrcoutable both fail\n'
 
 
-
+#作者：刘竟择
 @app.route('/usrcou/oldinsertusrcou',methods=['POST'])
 def oldinsertusrcou():
 	# 加入身份认证
@@ -697,7 +704,7 @@ def oldinsertusrcou():
 	else:
 		return u'insert fail\n'
 
-
+#作者：刘竟择
 @app.route('/usrcou/oldqueryusrcou',methods=['POST'])
 def oldqueryusrcou():
 	auth_token = request.form.get('token')
@@ -723,7 +730,7 @@ def oldqueryusrcou():
 	return json.dumps(allinfo)
 
 
-
+#作者：刘竟择
 @app.route('/usrcou/olddeleteusrcou',methods=['POST'])
 def olddeleteusrcou():
 	# 加入身份认证
@@ -747,6 +754,7 @@ def olddeleteusrcou():
 	else:
 		return u'delete oldusrcoutable fail\n'
 
+#作者：刘竟择
 #此方法处理用户登录
 @app.route('/user/enroll',methods=['POST'])
 def check_user():
@@ -767,7 +775,7 @@ def check_user():
 		return 'this username not exist'
 
 
-
+#作者：刘竟择
 #此方法处理管理员登录 
 @app.route('/admin/enroll',methods=['POST'])
 def check_admin():
@@ -790,6 +798,7 @@ def check_admin():
 	else:
 		return 'this username not exist'
 
+#作者：刘竟择
 #此方法处理查看用户信息 
 @app.route('/userinfo/one',methods=['POST'])
 def user_info():
@@ -828,9 +837,7 @@ def user_info():
 	#     result['success']='username is not exist'
 	#     return json.dumps(result)
 
-
-
-
+#作者：刘竟择
 #此方法处理查看全部用户信息 需进行管理员登录成功 
 @app.route('/userinfo/all',methods=['POST'])
 def user_info_all():
@@ -863,8 +870,7 @@ def user_info_all():
 		cnt += 1
 	return json.dumps(outinfo)
 
-
-
+#作者：刘竟择
 #此方法处理修改密码
 @app.route('/user/alter',methods=['POST'])
 def alter():
@@ -891,7 +897,7 @@ def alter():
 	# else:
 	# 	return 'this username not exist'
 
-
+#作者：刘竟择
 #此方法处理管理员修改密码  
 @app.route('/admin/alter',methods=['POST'])
 def alter_admin():
@@ -914,8 +920,7 @@ def alter_admin():
 	# else:
 	# 	return 'this username not exist'
 
-
-
+#作者：刘竟择
 #此方法处理管理员提升权限  
 @app.route('/admin/rank',methods=['POST'])
 def rank_admin():
@@ -938,7 +943,7 @@ def rank_admin():
 	# else:
 	# 	return 'this username not exist'
 
-
+#作者：刘竟择
 #此方法处理用户删除 
 @app.route('/admin/delete',methods=['POST'])
 def delete_user():
@@ -960,7 +965,7 @@ def delete_user():
 	userdb.session.commit()
 	return 'delete success'
 
-
+#作者：刘竟择
 #此方法处理用户注册
 @app.route('/user/register',methods=['POST'])
 def register():
@@ -974,10 +979,7 @@ def register():
 	userdb.session.commit()
 	return 'register successs'
 
-
-
-
-
+#作者：刘竟择
 @app.route('/usrcou/queryallusrcou',methods=['POST'])
 def queryallusrcou():
 
@@ -1022,7 +1024,7 @@ def queryallusrcou():
 
 
 # 课程推荐内容
-
+# 这一部分，算法由王泽楷实现，接口由刘竟择实现
 # In[3]:
 
 
@@ -1047,6 +1049,7 @@ def get_usr_data():
 
 #DICTION['0000'][1]
 
+#作者：刘竟择
 #--课程对应的课程类型
 def get_CATEGORY(courses):
 	allinfo={}
@@ -1070,7 +1073,6 @@ def get_usr_ID(uid):
     
 
 #ID
-
 #--------读入数据：初步推荐的用户数，根据数据集大小确定
 def get_REC_NUM():
 	global REC_NUM
@@ -1096,7 +1098,7 @@ def get_type(type1,type2):
 
 # In[7]:
 
-
+#作者：王泽楷
 #--------计算两个用户的相似度
 #--传入DIC[uid1], DIC[uid2]
 #--计算二者之间的距离，维数以 被推荐人(usr1) 的课程数为准
@@ -1120,11 +1122,13 @@ def cal_similarity(class_list_usr1, class_list_usr2):
 
 # In[8]:
 
-
+#作者：王泽楷
 #--------推荐出最接近的rec_num个人
 def sort_key(enum):
 	return enum[1]
 
+
+#作者：王泽楷
 def recommend():
 	#先将用户按距离排序
 	result = list()
@@ -1138,7 +1142,7 @@ def recommend():
 
 # In[9]:
 
-
+#作者：王泽楷
 #--------从推荐出的用户列表中对每个课程出现的次数求和，排除已经选过的和不需要的课程类型，输出结果列表
 #--这里当然可以根据用户相近情况加权，但是写起来好麻烦，让我偷下懒吧QAQ
 def sum_recommend(usr_list):
@@ -1158,6 +1162,7 @@ def sum_recommend(usr_list):
 	class_cnt_list.sort(key = sort_key,reverse = True)
 	return class_cnt_list[:RESULT_NUM]
 
+#作者：刘竟择
 @app.route('/recommend',methods=['POST'])
 def recom():
 	auth_token = request.form.get('token')
