@@ -80,10 +80,11 @@ public class ListViewAdapter extends BaseSwipeAdapter {
 
                 String courseTag = "course";
                 for(int i=0;i<addcourseNum;i++){
-                    String whereToPlace = chooseCourse.getString("courseNum"+i,"null");
+                    String whereToPlace = chooseCourse.getString("course"+i,"null");
                     //findone!
-                    if(!whereToPlace.equals("null")){
-                        whereToPlace+=i;
+                    if(whereToPlace.equals("null")){
+                    //    whereToPlace+=i;
+                        courseTag += i;
                         break;
                     }
                 }
@@ -177,16 +178,22 @@ public class ListViewAdapter extends BaseSwipeAdapter {
         delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                int pos = (Integer) delete.getTag();
+                Course obj = mDatas.get(pos);
+
+                SharedPreferences userInfo=mContext.getSharedPreferences("loginInfo",mContext.MODE_PRIVATE);
+                SharedPreferences.Editor editor = userInfo.edit();
+                editor.putString("alreadyTaken","1");
+                editor.apply();
+                String getToken = userInfo.getString("Token","null");
+                String getCid = obj.GetCid();
 
                 new HttpThread(){
                     @Override
                     public void run(){
-
+                        doInsertOldCourse(getToken,getCid);
                     }
                 }.start();
-
-                int pos = (Integer) delete.getTag();
-                Course obj = mDatas.get(pos);
 
                 mDatas.remove(obj);
                 notifyDataSetChanged();

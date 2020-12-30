@@ -25,8 +25,8 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 
 public class RegisterActivity extends AppCompatActivity  {
-    private EditText et_user_name, et_psw, et_psw_again;
-    private String userName, psw, pswAgain, Grade, Major, Department;
+    private EditText et_user_name, et_psw, et_psw_again, et_email;
+    private String userName, psw, pswAgain, Grade, Major, Department, Email;
     private Spinner department;
     private Spinner major;
     private Spinner grade;
@@ -50,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity  {
         et_user_name = (EditText) findViewById(R.id.et_user_name);
         et_psw = (EditText) findViewById(R.id.et_psw);
         et_psw_again = (EditText) findViewById(R.id.et_psw_again);
+        et_email = (EditText)findViewById(R.id.et_email);
         department = (Spinner) findViewById(R.id.spin_department);
         major = (Spinner) findViewById(R.id.spin_major);
         grade = (Spinner) findViewById(R.id.spin_grade);
@@ -142,6 +143,9 @@ public class RegisterActivity extends AppCompatActivity  {
                 if(TextUtils.isEmpty(userName)){
                     Toast.makeText(RegisterActivity.this, "请输入用户名",
                             Toast.LENGTH_SHORT).show();
+                }else if(TextUtils.isEmpty(Email)){
+                    Toast.makeText(RegisterActivity.this, "请输入邮箱",
+                            Toast.LENGTH_SHORT).show();
                 }else if(TextUtils.isEmpty(psw)){
                     Toast.makeText(RegisterActivity.this, "请输入密码",
                             Toast.LENGTH_SHORT).show();
@@ -157,7 +161,7 @@ public class RegisterActivity extends AppCompatActivity  {
 
 
                     String url="http://47.92.240.179:5001/user/register";
-                    new HttpThread(url, userName, md5Psw, Grade, Department, Major){
+                    new HttpThread(url, userName, md5Psw, Grade, Department, Major, Email){
                         @Override
                         public void run(){
                             Message msg = Message.obtain();
@@ -192,6 +196,7 @@ public class RegisterActivity extends AppCompatActivity  {
         userName = et_user_name.getText().toString().trim();
         psw = et_psw.getText().toString().trim();
         pswAgain = et_psw_again.getText().toString().trim();
+        Email = et_email.getText().toString().trim();
     }
 
     static class MyHandler extends Handler{

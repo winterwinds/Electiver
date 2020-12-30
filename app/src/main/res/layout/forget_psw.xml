@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/sign_up"
+            android:text="修改密码"
             android:textColor="@color/white"
             android:textSize="30sp"/>
 
@@ -36,7 +36,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal" >
             <EditText
-                android:id="@+id/et_user_name"
+                android:id="@+id/change_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -44,31 +44,9 @@
                 android:paddingTop="2dp"
                 android:paddingBottom="2dp"
                 android:paddingLeft="6dp"
-                android:hint="@string/account_number"
+                android:hint="账户名"
                 android:singleLine="true"
                 android:maxLength="15"
-                android:background="#ffffff"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-            <EditText
-                android:id="@+id/et_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:paddingLeft="6dp"
-                android:hint="邮箱"
-                android:inputType="textEmailAddress"
-                android:singleLine="true"
-                android:maxLength="20"
                 android:background="#ffffff"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -88,11 +66,35 @@
                 android:paddingBottom="2dp"
                 android:paddingLeft="6dp"
                 android:singleLine="true"
-                android:hint="@string/register_enterpassword"
+                android:hint="邮箱地址"
+                android:inputType="textEmailAddress"
+                android:maxLength="15"
+                android:background="#ffffff"
+                android:id="@+id/change_email"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:paddingLeft="6dp"
+                android:singleLine="true"
+                android:hint="新密码"
                 android:inputType="textPassword"
                 android:maxLength="15"
                 android:background="#ffffff"
-                android:id="@+id/et_psw"
+                android:id="@+id/change_newpsw"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -115,84 +117,9 @@
                 android:inputType="textPassword"
                 android:maxLength="15"
                 android:background="#ffffff"
-                android:id="@+id/et_psw_again"
+                android:id="@+id/change_psw_again"
                 android:textSize="18sp" />
         </LinearLayout>
-
-        <LinearLayout
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="6dp"
-                android:gravity="left"
-                android:text="@string/grade"
-                android:textSize="18sp" />
-            <Spinner
-                android:id="@+id/spin_grade"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:ellipsize = "middle"
-                android:layout_marginLeft="20dp"
-                android:paddingLeft="6dp"
-                android:spinnerMode="dropdown"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="6dp"
-                android:gravity="left"
-                android:text="@string/department"
-                android:textSize="18sp" />
-            <Spinner
-                android:id="@+id/spin_department"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:ellipsize = "middle"
-                android:layout_marginLeft="20dp"
-                android:paddingLeft="6dp"
-                android:spinnerMode="dropdown"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="6dp"
-                android:gravity="left"
-                android:text="@string/major"
-                android:textSize="18sp"/>
-            <Spinner
-                android:id="@+id/spin_major"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:ellipsize = "middle"
-                android:layout_marginLeft="20dp"
-                android:paddingLeft="6dp"
-                android:spinnerMode="dropdown"/>
-
-
-        </LinearLayout>
-
     </LinearLayout>
 
     <RelativeLayout
@@ -202,14 +129,14 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp" >
         <Button
-            android:id="@+id/btn_register"
+            android:id="@+id/change_makesure"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="40dp"
-            android:text="注册"
+            android:text="确定"
             android:textSize="24sp"
             android:background="@color/white" />
     </RelativeLayout>

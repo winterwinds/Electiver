@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="courseCategory">
+        <item>不限制</item>
         <item>任选</item>
         <item>专业必修</item>
         <item>限选</item>
         <item>全校任选</item>
         <item>通选课</item>
+    </string-array>
+    <string-array name="courseCategory2">
         <item>不限制</item>
+        <item>任选</item>
+        <item>专业必修</item>
+        <item>限选</item>
+        <item>全校任选</item>
+        <item>通选课</item>
     </string-array>
     <string-array name="courseDepartment">
         <item>不选择任何学院</item>

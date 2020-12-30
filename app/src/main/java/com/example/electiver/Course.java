@@ -290,17 +290,14 @@ public class Course {
     public boolean ifOktoAddCourse(Context mContext){
         SharedPreferences occupyTime=mContext.getSharedPreferences("timeAvail",mContext.MODE_PRIVATE);
         String check=occupyTime.getString(timetag1,"null");
-        Log.d("ifOkto",timetag1+" "+timetag2);
 
         if(check.equals("true")){
             return false;
         }
-        Log.d("ifOkto",check);
         check=occupyTime.getString(timetag2,"null");
         if(check.equals("true")){
             return false;
         }
-        Log.d("ifOkto",check);
         return true;
     }
 }

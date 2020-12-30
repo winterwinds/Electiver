@@ -35,6 +35,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.89" />
+            <Button
+                android:id="@+id/account_jmp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="jump"
+                android:layout_marginTop="300dp"
+                android:gravity="top"
+                app:layout_constraintTop_toBottomOf="@id/account_logout"
+                app:layout_constraintTop_toTopOf="@id/account_logout"
+                app:layout_constraintStart_toStartOf="@id/account_logout"
+                app:layout_constraintEnd_toEndOf="@id/account_logout" />
             <TextView
                 android:id="@+id/account_username"
                 android:background="@color/black"
@@ -43,10 +54,10 @@
                 android:layout_height="40dp"
                 android:gravity="top"
                 android:layout_marginTop="50dp"
-                app:layout_constraintBottom_toBottomOf="@id/account_logout"
-                app:layout_constraintTop_toTopOf="@id/account_logout"
-                app:layout_constraintStart_toStartOf="@id/account_logout"
-                app:layout_constraintEnd_toEndOf="@id/account_logout" />
+                app:layout_constraintBottom_toBottomOf="@id/account_jmp"
+                app:layout_constraintTop_toTopOf="@id/account_jmp"
+                app:layout_constraintStart_toStartOf="@id/account_jmp"
+                app:layout_constraintEnd_toEndOf="@id/account_jmp" />
             <TextView
                 android:id="@+id/account_grade"
                 android:background="@color/black"

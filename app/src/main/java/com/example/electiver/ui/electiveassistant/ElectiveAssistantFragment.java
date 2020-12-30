@@ -3,6 +3,7 @@ package com.example.electiver.ui.electiveassistant;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -71,13 +72,14 @@ public class ElectiveAssistantFragment extends Fragment {
     private String searchOnCategory="任选";
     private String searchOnDepartment="不选择任何学院";
     private String searchOnName="";
+    private String recommendType="通选课";
+    int recommend_num = 10;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_elective_assistant, container, false);
 
-        scroll = (ScrollView)view.findViewById(R.id.assistant_scrollList);
         scroll = (ScrollView)view.findViewById(R.id.assistant_scrollList);
 
 
@@ -87,71 +89,143 @@ public class ElectiveAssistantFragment extends Fragment {
         Button start_search = (Button)view.findViewById(R.id.assis_search);
         Button end_search = (Button)view. findViewById(R.id.assis_search_end);
 
+        Spinner spin_category = (Spinner)view.findViewById(R.id.spin_category);
+        Spinner spin_department = (Spinner)view.findViewById(R.id.spin_coursedepart);
+        Spinner spin_recommend = (Spinner)view.findViewById(R.id.spin_rec_category);
+
+        spin_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                searchOnCategory = (String)spin_category.getItemAtPosition(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        spin_department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                searchOnDepartment = (String)spin_department.getItemAtPosition(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        spin_recommend.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                recommendType = (String)spin_recommend.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
         start_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int searchwhich=0;
                 getEditValue(view);
-                if(searchOnCategory.equals("任选") && searchOnDepartment.equals("不选择任何学院")
+
+                SharedPreferences saveinfo = getActivity().getSharedPreferences("loginInfo", getActivity().MODE_PRIVATE);
+                token=saveinfo.getString("Token", "none");
+                String ifRecommend = saveinfo.getString("alreadyTaken","0");
+
+                if(!recommendType.equals("不限制")){
+                    if(ifRecommend.equals("0")){
+                        Toast.makeText(getContext(),"请至少添加一门已上过的课程",
+                                Toast.LENGTH_LONG).show();
+                        searchwhich=-1;
+                    }else{
+
+                        Toast.makeText(getContext(),"请点击显示查看推荐结果",
+                                Toast.LENGTH_LONG).show();
+                        searchwhich=0;
+                    }
+                }
+                else if(searchOnCategory.equals("任选") && searchOnDepartment.equals("不选择任何学院")
                 && searchOnName.equals("")){
                     Toast.makeText(getContext(), "请至少选择一项筛选条件",
                             Toast.LENGTH_SHORT).show();
                     getData();
                     freshCourseList(view,mDatas);
-
+                    searchwhich=-1;
                 }else{
                     Toast.makeText(getContext(), "开始搜索",
                             Toast.LENGTH_SHORT).show();
-                    ArrayList<Pair<String, String>> paras= new ArrayList<Pair<String, String>>();
-
-                    SharedPreferences saveinfo = getActivity().getSharedPreferences("loginInfo", getActivity().MODE_PRIVATE);
-                    token=saveinfo.getString("Token", "none");
-                    Log.d("fileOutput",token);
                     if(token.equals("none")){
                         Toast.makeText(getContext(), "Token失效，请重新登录",
                                 Toast.LENGTH_SHORT).show();
+                        searchwhich=-1;
                     }
                     else{
-                        Pair<String, String> gettoken=new Pair<>("token",token);
-                        paras.add(gettoken);
-
-                        if(!searchOnCategory.equals("任选")){
-                            Pair<String, String> getpara=new Pair<>("category",searchOnCategory);
-                            paras.add(getpara);
-                        }
-                        if(!searchOnDepartment.equals("不选择任何学院")){
-                            Pair<String, String> getpara=new Pair<>("depart",searchOnDepartment);
-                            paras.add(getpara);
-                        }
-                        if(!searchOnName.equals("")){
-                            Pair<String, String> getpara=new Pair<>("name",searchOnName);
-                            paras.add(getpara);
-                        }
-
-                        new HttpThread(){
-                            @Override
-                            public void run(){
-                                String queryResults = doCourseQuery(paras);
-                                String filename = "tmpCourseData.txt";
-                                byte[] buffer = queryResults.getBytes();
-                                int len = buffer.length;
-                                FileOutputStream outputStream = null;
-                                try{
-                                    outputStream = getContext().openFileOutput(filename,Context.MODE_PRIVATE);
-                                    try{
-                                        outputStream.write(buffer,0,len);
-                                        Log.d("fileOutput","write something");
-                                    }catch(IOException e){
-                                        e.printStackTrace();
-                                    }finally{
-                                        outputStream.close();
-                                    }
-                                }catch(IOException e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        }.start();
+                        searchwhich=1;
                     }
                 }
+                ArrayList<Pair<String, String>> paras= new ArrayList<Pair<String, String>>();
+                Pair<String, String> gettoken=new Pair<>("token",token);
+                paras.add(gettoken);
+
+                if(!searchOnCategory.equals("任选")){
+                    Pair<String, String> getpara=new Pair<>("category",searchOnCategory);
+                    paras.add(getpara);
+                }
+                if(!searchOnDepartment.equals("不选择任何学院")){
+                    Pair<String, String> getpara=new Pair<>("depart",searchOnDepartment);
+                    paras.add(getpara);
+                }
+                if(!searchOnName.equals("")){
+                    Pair<String, String> getpara=new Pair<>("name",searchOnName);
+                    paras.add(getpara);
+                }
+
+                int finalSearchwhich = searchwhich;
+                new HttpThread(){
+                    @Override
+                    public void run(){
+                        String filename = "tmpCourseData.txt";
+                        FileOutputStream outputStream = null;
+                        if(finalSearchwhich ==1){
+                            String queryResults = doCourseQuery(paras);
+                            Log.d("ShowResult","1:"+queryResults);
+                            byte[] buffer = queryResults.getBytes();
+                            int len = buffer.length;
+                            try{
+                                outputStream = getContext().openFileOutput(filename,Context.MODE_PRIVATE);
+                                try{
+                                    outputStream.write(buffer,0,len);
+                                }catch(IOException e){
+                                    e.printStackTrace();
+                                }finally{
+                                    outputStream.close();
+                                }
+                            }catch(IOException e){
+                                e.printStackTrace();
+                            }
+                        }
+                        else if(finalSearchwhich==0){
+                            String queryResults = doRecommend(token, recommendType,recommend_num);
+                            Log.d("ShowResult","2:"+queryResults);
+                            byte[] buffer = queryResults.getBytes();
+                            int len = buffer.length;
+                            try{
+                                outputStream = getContext().openFileOutput(filename,Context.MODE_PRIVATE);
+                                try{
+                                    outputStream.write(buffer,0,len);
+                                }catch(IOException e){
+                                    e.printStackTrace();
+                                }finally{
+                                    outputStream.close();
+                                }
+                            }catch(IOException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
             }
         });
 
@@ -173,8 +247,11 @@ public class ElectiveAssistantFragment extends Fragment {
                     }else if(getResult.equals("{}")){
                         Toast.makeText(getContext(), "没有符合条件的课程",
                                 Toast.LENGTH_SHORT).show();
+                    }else if(getResult.equals("")){
+                        Toast.makeText(getContext(),"no Result",
+                                Toast.LENGTH_SHORT).show();
                     }else{
-                        Log.d("checkSearch","try freshlist");
+
                         try{
                             JSONObject jsonObject = new JSONObject(getResult);
                             List<Course> myCourseData=new ArrayList<Course>();
@@ -230,28 +307,17 @@ public class ElectiveAssistantFragment extends Fragment {
 
     public void getEditValue(View view){
         EditText et_course_name = (EditText)view.findViewById(R.id.search_on_name);
-        Spinner spin_category = (Spinner)view.findViewById(R.id.spin_category);
-        Spinner spin_department = (Spinner)view.findViewById(R.id.spin_coursedepart);
+        EditText et_recom_num = (EditText)view.findViewById(R.id.recommend_num);
 
         searchOnName = et_course_name.getText().toString().trim();
-        spin_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                searchOnCategory = (String)spin_category.getItemAtPosition(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        spin_department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                searchOnDepartment = (String)spin_department.getItemAtPosition(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        if(!TextUtils.isEmpty(et_recom_num.getText())){
+            recommend_num = Integer.parseInt(et_recom_num.getText().toString().trim());
+        }else{
+            recommend_num = 10;
+        }
+        Log.d("assist",String.valueOf(recommend_num));
+
+
     }
 
     public void getData(){

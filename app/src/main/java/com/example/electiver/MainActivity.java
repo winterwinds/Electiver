@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run(){
                     msg[0] = Message.obtain();
-                    String ifTokenOK = doQueryComment(getToken);
+                    String ifTokenOK = doQueryMyComment(getToken);
                     if(ifTokenOK.equals("Signature expired. Please log in again.")){
                         msg[0].what=0x01;
                     }else if(ifTokenOK.equals("Invalid token. Please log in again.")){
