@@ -1203,11 +1203,39 @@ def recom():
 	result = {}
 	lst = sum_recommend(recommend())
 	cnt = 0
+	title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
 	for i in lst:
 		# print(i)
-		result[str(cnt)] = i[0]
-		cnt += 1
+		cid = i[0]
+		sql = 'select * from coursetable where cid = %s'
+		args = (cid)
+		results = querysql(mysql, sql, args)
+		print(results)
+		print('*'*100)
+		for j in results:
+			oneinfo = dict(zip(title,list(j)))
+			result[str(cnt)] = oneinfo
+			cnt += 1
 	return json.dumps(result)
+
+
+
+	
+	# cnt = 0
+	# for i in list(results):
+	# 	oneinfo = dict(zip(title,list(i)))
+	# 	leng = len(oneinfo['name'])
+	# 	k = 0
+	# 	flag = 0
+	# 	print(oneinfo['name'])
+	# 	#oneinfo['name'] = oneinfo['name'].decode('utf8')
+	# 	for k in range(leng-1,-1,-1):
+	# 		if u'\u4e00' <= oneinfo['name'][k] <= u'\u9fa5' or oneinfo['name'][k] == '\uFF09':
+	# 			break
+	# 	oneinfo['name'] = oneinfo['name'][:k+1]
+	# 	courseinfo[str(cnt)] = oneinfo
+	# 	cnt += 1
+	# return json.dumps(courseinfo)
 # In[ ]:
 
 if __name__ == '__main__':
