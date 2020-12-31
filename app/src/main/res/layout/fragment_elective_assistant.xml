@@ -64,17 +64,43 @@
             android:layout_width="70dp"
             android:layout_height="40dp"
             android:text="@string/start_search"
-            android:background="@drawable/assistan_btn"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="7dp"/>
+            android:layout_marginLeft="100dp"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/assistant_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="4dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/assistant_searchOnName">
+
+        <Spinner
+            android:id="@+id/spin_rec_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:layout_marginLeft="10dp"
+            android:entries="@array/courseCategory2"/>
+        <EditText
+            android:id="@+id/recommend_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:singleLine="true"
+            android:inputType="number"
+            android:hint="推荐课程数量"/>
         <Button
             android:id="@+id/assis_search_end"
-            android:layout_width="70dp"
-            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
             android:text="@string/end_search"
-            android:textSize="10sp"
             android:layout_marginLeft="10dp"/>
-
     </LinearLayout>
 
     <ScrollView
@@ -89,7 +115,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/assistant_searchOnName"
+        app:layout_constraintTop_toBottomOf="@id/assistant_recommend"
         android:background="@color/white">
         <LinearLayout
             android:layout_width="match_parent"

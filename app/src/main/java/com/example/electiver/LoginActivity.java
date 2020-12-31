@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         //从main_title_bar中获取的id
         //从activity_login.xml中获取的
         TextView tv_register = (TextView) findViewById(R.id.tv_register);
+        TextView tv_forgetpsw = (TextView) findViewById(R.id.forget_psw);
         Button btn_login = (Button) findViewById(R.id.btn_login);
         et_user_name= (EditText) findViewById(R.id.et_user_name);
         et_psw= (EditText) findViewById(R.id.et_psw);
@@ -63,7 +64,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
-
+        tv_forgetpsw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgetPswActivity.class);
+                startActivity(intent);
+            }
+        });
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

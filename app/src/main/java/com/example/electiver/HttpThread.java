@@ -55,12 +55,13 @@ public class HttpThread extends Thread{
     String grade;
     String department;
     String major;
+    String email;
 
     /*------------------------------
        仅注册和登陆需要用到的注册函数
      -------------------------------*/
 
-    public HttpThread(String url, String username, String password, String grade, String depart, String major){
+    public HttpThread(String url, String username, String password, String grade, String depart, String major, String email){
         try{
             this.url = new URL(url);
         }catch(MalformedURLException e){
@@ -71,7 +72,7 @@ public class HttpThread extends Thread{
         this.grade = grade;
         this.department = depart;
         this.major = major;
-
+        this.email = email;
     }
 
     /*------------------------------
@@ -96,7 +97,7 @@ public class HttpThread extends Thread{
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
-            String data = "username="+username+"&password="+password;
+            String data = "username="+username+"&password="+password+"&email="+email;
             data += "&major="+major+"&department="+department+"&grade="+grade;
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
@@ -157,6 +158,44 @@ public class HttpThread extends Thread{
             }
             getresult=con.getResponseCode();
         }catch(MalformedURLException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public String doRecommend(String token, String type, int recom_num){
+        String result = "";
+        BufferedReader reader = null;
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
+                detectDiskWrites().detectNetwork().penaltyLog().build());
+        try{
+            String myurl = "http://47.92.240.179:5001/recommend";
+            String tosend ="token="+token+"&type1="+type+"&recom_num"+recom_num;
+            URL MyUrl = new URL(myurl);
+            HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            con.setUseCaches(false);
+            con.getOutputStream().write(tosend.getBytes("UTF-8"));
+            con.getInputStream();
+
+            if(con.getResponseCode()==200) {
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = reader.readLine();
+                if(reader != null){
+                    try{
+                        reader.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d("doCourseQuery", "Response error");
+            }
+        }catch(MalformedURLException e){
+            e.printStackTrace();
+        }catch(IOException e){
             e.printStackTrace();
         }
         return result;
@@ -224,30 +263,39 @@ public class HttpThread extends Thread{
     public String doQueryOnSchedule(String token, int whichday, int starttime, int endtime){
         String tosend = "token="+token;
         String day="";
+        String dayti="";
         switch(whichday){
             case 1:
                 day="mon";
+                dayti="moti";
                 break;
             case 2:
                 day="tue";
+                dayti="tuei";
                 break;
             case 3:
                 day="wed";
+                dayti="weti";
                 break;
             case 4:
                 day="thu";
+                dayti="thti";
                 break;
             case 5:
                 day="fri";
+                dayti="frti";
                 break;
             case 6:
                 day="sat";
+                dayti="sati";
                 break;
             case 7:
                 day="sun";
+                dayti="suti";
                 break;
         }
-        tosend+="&"+day+"=";
+        tosend+="&use_time=true&depart=信息科学技术学院&"+day+"=true";
+        tosend+="&"+dayti+"=";
         tosend+=String.valueOf(starttime);
         tosend+="--";
         tosend+=String.valueOf(endtime);
@@ -256,6 +304,7 @@ public class HttpThread extends Thread{
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().
                 detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
 
+        Log.d("askforData",tosend);
         try{
             String myurl = "http://47.92.240.179:5001/querycourse";
             URL MyUrl = new URL(myurl);
@@ -352,20 +401,20 @@ public class HttpThread extends Thread{
     }
 
     /*------------------------------
-        通过cid查询课程评论
+        通过uid查询课程评论
         参数为token
         连接失败打印Logcat，Tag：doQueryComment
         成功返回包含若干条评论的Json形式字符串
      -------------------------------*/
 
-    public String doQueryComment(String token){
+    public String doQueryMyComment(String token){
         int getresult=0;
         String result = "";
         BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
-            String myurl = "http://47.92.240.179:5001/comment/querybycid";
+            String myurl = "http://47.92.240.179:5001/comment/querybyuid";
             myurl+="?token="+token;
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
@@ -396,20 +445,20 @@ public class HttpThread extends Thread{
     }
 
     /*------------------------------
-        查询我发表过的评论
+        通过cid查看评论
         参数为token、课程cid
         连接失败打印Logcat，Tag：doQueryComment
         成功返回包含若干条评论的Json形式字符串
      -------------------------------*/
 
-    public String doQueryMyComment(String token, String cid){
+    public String doQueryComment(String token, String cid){
         int getresult=0;
         String result = "";
         BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
-            String myurl = "http://47.92.240.179:5001/comment/querybyuid";
+            String myurl = "http://47.92.240.179:5001/comment/querybycid";
             myurl+="?token="+token+"&cid="+cid;
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
@@ -615,6 +664,31 @@ public class HttpThread extends Thread{
         return getresult;
     }
 
+    public int doInsertOldCourse(String token, String cid){
+        int getresult=0;
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
+                detectDiskWrites().detectNetwork().penaltyLog().build());
+        try{
+            String myurl = "http://47.92.240.179:5001/usrcou/oldinsertusrcou";
+            String tosend ="token="+token+"&cid="+cid;
+            URL MyUrl = new URL(myurl);
+            HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setDoOutput(true);
+            con.setUseCaches(false);
+            con.getOutputStream().write(tosend.getBytes("UTF-8"));
+            con.getInputStream();
+
+            getresult=con.getResponseCode();
+        }catch(MalformedURLException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return getresult;
+    }
+
     /*------------------------------
         用户增加自己的课程
         参数为token、课程cid
@@ -749,7 +823,7 @@ public class HttpThread extends Thread{
         成功返回字符串
      -------------------------------*/
 
-    public String doAlterPassword(String token, String oldpsw, String newpsw){
+    public String doAlterPassword(String username, String email, String newpsw){
         int getresult=0;
         String result = "";
         BufferedReader reader = null;
@@ -757,7 +831,7 @@ public class HttpThread extends Thread{
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
             String myurl = "http://47.92.240.179:5001/user/alter";
-            String tosend ="token="+token+"&password="+oldpsw+"&new_password="+newpsw;
+            String tosend ="username="+username+"&email="+email+"&new_password="+newpsw;
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
 
@@ -778,8 +852,9 @@ public class HttpThread extends Thread{
                         e.printStackTrace();
                     }
                 }
+                Log.d("doAlterPassword", result);
             }else{
-                Log.d("doDeleteCourse", "responsecode error");
+                Log.d("doAlterPassword", "responsecode error");
             }
 
         }catch(MalformedURLException e){

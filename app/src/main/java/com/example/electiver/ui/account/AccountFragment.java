@@ -12,14 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.electiver.LoginActivity;
-import com.example.electiver.MainActivity;
 import com.example.electiver.R;
+import com.example.electiver.RegisterActivity;
+import com.example.electiver.TimeSelectActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +53,20 @@ public class AccountFragment extends Fragment {
                 getValueRefreshed();
             }
         });
+        Button btn_jmp = (Button) getActivity().findViewById(R.id.account_jmp);
+        btn_jmp.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent=new Intent(getActivity().getApplicationContext(), TimeSelectActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("day", 3);
+                bundle.putInt("starttime",1);
+                bundle.putInt("endtime",2);
+                intent.putExtras(bundle);
+                getActivity().startActivity(intent);
+            }
+        });
+
     }
 
     public void reLogin(){
@@ -62,7 +74,7 @@ public class AccountFragment extends Fragment {
         SharedPreferences getUserInfo = getActivity().getSharedPreferences("loginInfo",getActivity().MODE_PRIVATE);
         SharedPreferences.Editor editor=getUserInfo.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
         //清空courseInfo
         SharedPreferences getCourseInfo = getActivity().getSharedPreferences("courseInfo",getActivity().MODE_PRIVATE);
         editor=getCourseInfo.edit();
@@ -71,8 +83,8 @@ public class AccountFragment extends Fragment {
         //清空timeAvail
         SharedPreferences occupyTime=getActivity().getSharedPreferences("timeAvail",getActivity().MODE_PRIVATE);
         editor = occupyTime.edit();
-        String possibledays[] ={"mon","tue","wed","thu","fri","sat","sun"};
-        String possibletime[] ={"1-2","3-4","5-6","7-8","10-11"};
+        String[] possibledays ={"mon","tue","wed","thu","fri","sat","sun"};
+        String[] possibletime ={"1-2","3-4","5-6","7-8","10-11"};
         for(int i=0;i<possibledays.length;i++){
             for(int j=0;j<possibletime.length;j++){
                 String timetag = possibledays[i]+possibletime[j];
@@ -116,7 +128,7 @@ public class AccountFragment extends Fragment {
             }
             SharedPreferences.Editor editor = saveinfo.edit();
             editor.putString("Token",Token);
-            editor.commit();
+            editor.apply();
 
         }else{
             Log.d("bundle","nodatatomain");
