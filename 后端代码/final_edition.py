@@ -881,24 +881,38 @@ def user_info_all():
 #此方法处理修改密码
 @app.route('/user/alter',methods=['POST'])
 def alter():
-	auth_token = request.form.get('token')
-	auth = decode_auth_token(auth_token)
-	if auth == 2:
-		return u'Signature expired. Please log in again.\n'
-	if auth == 3:
-		return u'Invalid token. Please log in again.\n'
-	uid = auth['uid']
-	rk = auth['rk']
+	# auth_token = request.form.get('token')
+	# auth = decode_auth_token(auth_token)
+	# if auth == 2:
+	# 	return u'Signature expired. Please log in again.\n'
+	# if auth == 3:
+	# 	return u'Invalid token. Please log in again.\n'
+	# uid = auth['uid']
+	# rk = auth['rk']
 	# if rk == 2:
 	# 	return u"Permission Denied"
+	have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
+	if have_registed.__len__() != 0: # 判断是否已被注册
+		passwordRight = userInfoTable.query.filter_by(username=request.form['username']).all()
+		if passwordRight.__len__() != 0:
+			userinfo = userInfoTable.query.filter(userInfoTable.username == request.form['username']).first()
+			userinfo.password=request.form['new_password']
+			userdb.session.commit()
+			return 'change password success'
+		else:
+			return 'password wrong'
+	else:
+		return 'this username not exist'
+
+
 	# have_registed = userInfoTable.query.filter_by(id=uid).all()
 	# if have_registed.__len__() != 0: # 判断是否已被注册
 	# 	passwordRight = userInfoTable.query.filter_by(username=request.form['username'],password=request.form['password']).all()
 	# 	if passwordRight.__len__() != 0:
-	userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
-	userinfo.password=request.form['new_password']
-	userdb.session.commit()
-	return 'change password success'
+	# userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
+	# userinfo.password=request.form['new_password']
+	# userdb.session.commit()
+	# return 'change password success'
 	# 	else:
 	# 		return 'password wrong'
 	# else:
