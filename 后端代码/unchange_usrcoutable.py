@@ -90,7 +90,7 @@ def encode_auth_token(user_id,rk):
 	"""
 	try:
 		payload = {
-			'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7, hours=0),
+			'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, hours=1),
 			'iat': datetime.datetime.utcnow(),
 			'uid': user_id,
 			'rk' : rk
@@ -620,20 +620,9 @@ def insertusrcou():
 
 	uid = auth['uid']
 	cid = request.form.get('cid')
-	name = request.form.get('name')
-	classnum = int(request.form.get('classnum'))
-	teacher = request.form.get('teacher')
-	mon = request.form.get('mon')
-	tue = request.form.get('tue')
-	wed = request.form.get('wed')
-	thu = request.form.get('thu')
-	fri = request.form.get('fri')
-	sat = request.form.get('sat')
-	sun = request.form.get('sun')
-	depart = request.form.get('depart')
 
-	sql = "insert into usrcoutable (id,cid,name,classnum,teacher,mon,tue,wed,thu,fri,sat,sun,depart) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-	args = (uid,cid,name,classnum,teacher,mon,tue,wed,thu,fri,sat,sun,depart)
+	sql = "insert into usrcoutable (id,cid) values (%s,%s)"
+	args = (uid,cid)
 	print sql
 	result = updatesql(mysql, sql, args)
 	if result:
@@ -652,17 +641,16 @@ def queryusrcou():
 		return u'Invalid token. Please log in again.\n'
 
 	uid = auth['uid']
-	sql = "select * from usrcoutable where id=%s"
+	sql = "select cid from usrcoutable where id=%s"
 	args = (uid)
 	print sql
 	
 	allinfo = {}
 
 	results = querysql(mysql, sql, args)
-	title = ['cid','uid','depart','name','classnum','mon','tue','wed','thu','fri','sat','sun','teacher']
 	cnt = 0
 	for i in list(results):
-		oneinfo = dict(zip(title,list(i)))
+		oneinfo = list(i)
 		allinfo[str(cnt)] = oneinfo
 		cnt += 1
 	return json.dumps(allinfo)
@@ -713,20 +701,9 @@ def oldinsertusrcou():
 
 	uid = auth['uid']
 	cid = request.form.get('cid')
-	name = request.form.get('name')
-	classnum = int(request.form.get('classnum'))
-	teacher = request.form.get('teacher')
-	mon = request.form.get('mon')
-	tue = request.form.get('tue')
-	wed = request.form.get('wed')
-	thu = request.form.get('thu')
-	fri = request.form.get('fri')
-	sat = request.form.get('sat')
-	sun = request.form.get('sun')
-	depart = request.form.get('depart')
-
-	sql = "insert into oldusrcoutable (id,cid,name,classnum,teacher,mon,tue,wed,thu,fri,sat,sun,depart) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-	args = (uid,cid,name,classnum,teacher,mon,tue,wed,thu,fri,sat,sun,depart)
+	print(uid,cid)
+	sql = "insert into oldusrcoutable (id,cid) values (%s,%s)"
+	args = (uid,cid)
 	print sql
 	result = updatesql(mysql, sql, args)
 	if result:
@@ -745,7 +722,7 @@ def oldqueryusrcou():
 		return u'Invalid token. Please log in again.\n'
 
 	uid = auth['uid']
-	sql = "select * from oldusrcoutable where id=%s"
+	sql = "select cid from oldusrcoutable where id=%s"
 	args = (uid)
 	print sql
 	
@@ -1237,70 +1214,23 @@ def recom():
 
 	get_type(request.form.get('type1'),request.form.get('type2'))
 
-
-	keys = DICTION.keys()
-	if uid  not in keys:
-		# return "aaaa"
-		print("a"*100)
-		result = {}
-		lst =  [[u'04834200', 1], [u'03033710', 1], [u'00131480', 1]]
-		print("lst",lst)
-		cnt = 0
-		title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
-		for i in lst:
-			# print(i)
-			cid = i[0]
-			sql = 'select * from coursetable where cid = %s'
-			args = (cid)
-			results = querysql(mysql, sql, args)
-			print(results)
-			print('*'*100)
-			for j in results:
-				oneinfo = dict(zip(title,list(j)))
-				result[str(cnt)] = oneinfo
-				cnt += 1
-		return json.dumps(result)
-	else:
-		result = {}
-		lst = sum_recommend(recommend())
-		print("lst",lst)
-		cnt = 0
-		title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
-		for i in lst:
-			# print(i)
-			cid = i[0]
-			sql = 'select * from coursetable where cid = %s'
-			args = (cid)
-			results = querysql(mysql, sql, args)
-			print(results)
-			print('*'*100)
-			for j in results:
-				oneinfo = dict(zip(title,list(j)))
-				result[str(cnt)] = oneinfo
-				cnt += 1
-		return json.dumps(result)
-
-
-
-
-
-	# result = {}
-	# lst = sum_recommend(recommend())
-	# cnt = 0
-	# title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
-	# for i in lst:
-	# 	# print(i)
-	# 	cid = i[0]
-	# 	sql = 'select * from coursetable where cid = %s'
-	# 	args = (cid)
-	# 	results = querysql(mysql, sql, args)
-	# 	print(results)
-	# 	print('*'*100)
-	# 	for j in results:
-	# 		oneinfo = dict(zip(title,list(j)))
-	# 		result[str(cnt)] = oneinfo
-	# 		cnt += 1
-	# return json.dumps(result)
+	result = {}
+	lst = sum_recommend(recommend())
+	cnt = 0
+	title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
+	for i in lst:
+		# print(i)
+		cid = i[0]
+		sql = 'select * from coursetable where cid = %s'
+		args = (cid)
+		results = querysql(mysql, sql, args)
+		print(results)
+		print('*'*100)
+		for j in results:
+			oneinfo = dict(zip(title,list(j)))
+			result[str(cnt)] = oneinfo
+			cnt += 1
+	return json.dumps(result)
 
 
 

@@ -659,10 +659,9 @@ def queryusrcou():
 	allinfo = {}
 
 	results = querysql(mysql, sql, args)
-	title = ['cid','uid','depart','name','classnum','mon','tue','wed','thu','fri','sat','sun','teacher']
 	cnt = 0
 	for i in list(results):
-		oneinfo = dict(zip(title,list(i)))
+		oneinfo = list(i)
 		allinfo[str(cnt)] = oneinfo
 		cnt += 1
 	return json.dumps(allinfo)
@@ -1113,6 +1112,7 @@ def get_CATEGORY(courses):
 #--------读入数据：需要推荐课程的用户ID
 def get_usr_ID(uid):
 	global ID
+	print("uid",uid)
 	ID  = uid
     
 
@@ -1179,6 +1179,7 @@ def recommend():
 	for people in DICTION:
 		print("people",people)
 		print("DICTION",DICTION)
+		print("ID",ID)
 		result.append([people,cal_similarity(DICTION[ID], DICTION[people])])
 	result.sort(key = sort_key)
 	return result[:REC_NUM]
@@ -1209,6 +1210,8 @@ def sum_recommend(usr_list):
 #作者：刘竟择
 @app.route('/recommend',methods=['POST'])
 def recom():
+
+	
 	auth_token = request.form.get('token')
 	auth = decode_auth_token(auth_token)
 	if auth == 2:
@@ -1228,15 +1231,14 @@ def recom():
 		res = usrcouinfo[i]
 		for j in res:
 			num.append(j)
-	# print(num)
+	print("num",num)
 	courses = list(set(num))
-	# print("courses",courses)
+	print("courses",courses)
 
 	get_CATEGORY(courses)
 	get_REC_NUM()
 
 	get_type(request.form.get('type1'),request.form.get('type2'))
-
 
 	keys = DICTION.keys()
 	if uid  not in keys:
@@ -1279,28 +1281,6 @@ def recom():
 				result[str(cnt)] = oneinfo
 				cnt += 1
 		return json.dumps(result)
-
-
-
-
-
-	# result = {}
-	# lst = sum_recommend(recommend())
-	# cnt = 0
-	# title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
-	# for i in lst:
-	# 	# print(i)
-	# 	cid = i[0]
-	# 	sql = 'select * from coursetable where cid = %s'
-	# 	args = (cid)
-	# 	results = querysql(mysql, sql, args)
-	# 	print(results)
-	# 	print('*'*100)
-	# 	for j in results:
-	# 		oneinfo = dict(zip(title,list(j)))
-	# 		result[str(cnt)] = oneinfo
-	# 		cnt += 1
-	# return json.dumps(result)
 
 
 
