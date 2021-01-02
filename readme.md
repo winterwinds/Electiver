@@ -1,11 +1,12 @@
 ## backend content
   environment : flask, python2.7
   运行代码请用
-  
+
   python final_edition.py
 
   后端开发由刘竟择和司昊田完成
-  各自的函数后面标明了作者
+  各自的函数后面标明了作者。
+  目前后端程序运行在tmux的session,flask中
 
 ## Update 12.27
 
