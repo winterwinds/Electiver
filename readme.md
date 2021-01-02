@@ -1,3 +1,12 @@
+## backend content
+  environment : flask, python2.7
+  运行代码请用
+  
+  python final_edition.py
+
+  后端开发由刘竟择和司昊田完成
+  各自的函数后面标明了作者
+
 ## Update 12.27
 
 *@author 谭淑敏*
