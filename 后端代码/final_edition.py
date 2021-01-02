@@ -1127,7 +1127,7 @@ def get_REC_NUM():
 #--------读入数据：推荐的课程数，根据需求确定
 def get_RESULT_SUM(recom_num):
 	global RESULT_NUM
-	get_sum = recom_num
+	get_sum = int(recom_num)
 	RESULT_NUM = get_sum
   
 
@@ -1218,10 +1218,11 @@ def recom():
 	uid = auth['uid']
 
 	get_usr_ID(uid)
-	get_RESULT_SUM(request.args.get('recom_num'))
+	get_RESULT_SUM(request.form.get('recom_num'))
 	get_usr_data()
 	
 	global DICTION
+	global RESULT_NUM
 	usrcouinfo = DICTION
 	num = []
 	for i in usrcouinfo.keys():
@@ -1249,6 +1250,7 @@ def recom():
 		title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
 		for i in lst:
 			# print(i)
+			fl = 0
 			cid = i[0]
 			sql = 'select * from coursetable where cid = %s'
 			args = (cid)
@@ -1259,6 +1261,15 @@ def recom():
 				oneinfo = dict(zip(title,list(j)))
 				result[str(cnt)] = oneinfo
 				cnt += 1
+				print("cnta",cnt)
+				print("aaaaaaaa",RESULT_NUM)
+				if cnt == RESULT_NUM:
+					print("cnt",cnt)
+					fl = 1
+					break
+			if fl == 1:
+				break
+				
 		return json.dumps(result)
 	else:
 		result = {}
@@ -1268,6 +1279,7 @@ def recom():
 		title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
 		for i in lst:
 			# print(i)
+			fl = 0
 			cid = i[0]
 			sql = 'select * from coursetable where cid = %s'
 			args = (cid)
@@ -1278,6 +1290,15 @@ def recom():
 				oneinfo = dict(zip(title,list(j)))
 				result[str(cnt)] = oneinfo
 				cnt += 1
+				print("cnta",cnt)
+				print("aaaaaaaa",RESULT_NUM)
+				if cnt == RESULT_NUM:
+					print("cnt",cnt)
+					fl = 1
+					break
+			if fl == 1:
+				break
+				
 		return json.dumps(result)
 
 
