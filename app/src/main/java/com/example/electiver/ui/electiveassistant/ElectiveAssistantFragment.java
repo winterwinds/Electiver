@@ -4,56 +4,38 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.WindowMetrics;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.daimajia.swipe.util.Attributes;
 import com.example.electiver.Course;
 import com.example.electiver.HttpThread;
-import com.example.electiver.IDUtils;
-import com.example.electiver.R;
 import com.example.electiver.ListViewAdapter;
-import com.example.electiver.RegisterActivity;
+import com.example.electiver.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.LineNumberReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +69,6 @@ public class ElectiveAssistantFragment extends Fragment {
         screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
 
         Button start_search = (Button)view.findViewById(R.id.assis_search);
-        Button end_search = (Button)view. findViewById(R.id.assis_search_end);
 
         Spinner spin_category = (Spinner)view.findViewById(R.id.spin_category);
         Spinner spin_department = (Spinner)view.findViewById(R.id.spin_coursedepart);
@@ -140,14 +121,11 @@ public class ElectiveAssistantFragment extends Fragment {
                                 Toast.LENGTH_LONG).show();
                         searchwhich=-1;
                     }else{
-
-                        Toast.makeText(getContext(),"请点击显示查看推荐结果",
-                                Toast.LENGTH_LONG).show();
                         searchwhich=0;
                     }
                 }
-                else if(searchOnCategory.equals("任选") && searchOnDepartment.equals("不选择任何学院")
-                && searchOnName.equals("")){
+                else if(searchOnCategory.equals("不限制") && searchOnDepartment.equals("不选择任何学院")
+                        && searchOnName.equals("")){
                     Toast.makeText(getContext(), "请至少选择一项筛选条件",
                             Toast.LENGTH_SHORT).show();
                     getData();
@@ -169,7 +147,7 @@ public class ElectiveAssistantFragment extends Fragment {
                 Pair<String, String> gettoken=new Pair<>("token",token);
                 paras.add(gettoken);
 
-                if(!searchOnCategory.equals("任选")){
+                if(!searchOnCategory.equals("不限制")){
                     Pair<String, String> getpara=new Pair<>("category",searchOnCategory);
                     paras.add(getpara);
                 }
@@ -183,7 +161,7 @@ public class ElectiveAssistantFragment extends Fragment {
                 }
 
                 int finalSearchwhich = searchwhich;
-                new HttpThread(){
+                Thread t = new HttpThread(){
                     @Override
                     public void run(){
                         String filename = "tmpCourseData.txt";
@@ -225,11 +203,71 @@ public class ElectiveAssistantFragment extends Fragment {
                             }
                         }
                     }
-                }.start();
+                };
+                t.start();
+
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                SharedPreferences saveResult= getActivity().getSharedPreferences("courseInfo",getActivity().MODE_PRIVATE);
+                String getResult;
+                try{
+                    FileInputStream readFile = getContext().openFileInput("tmpCourseData.txt");
+                    byte[] resultByte = new byte[readFile.available()];
+                    readFile.read(resultByte);
+                    getResult = new String(resultByte);
+                    Log.d("fileOutput",getResult);
+
+                    if(getResult.equals("null")){
+                        Toast.makeText(getContext(), "正在搜索中，请稍后重试",
+                                Toast.LENGTH_SHORT).show();
+                    }else if(getResult.equals("{}")){
+                        Toast.makeText(getContext(), "没有符合条件的课程",
+                                Toast.LENGTH_SHORT).show();
+                    }else if(getResult.equals("")){
+                        Toast.makeText(getContext(),"no Result",
+                                Toast.LENGTH_SHORT).show();
+                    }else{
+
+                        try{
+                            JSONObject jsonObject = new JSONObject(getResult);
+                            List<Course> myCourseData=new ArrayList<Course>();
+                            int num = jsonObject.length();
+                            int count=0;
+                            int i=0;
+                            while(true){
+                                String info = jsonObject.getString(String.valueOf(i));
+                                Course course = new Course();
+                                course.SetAllAttr(info);
+                                if(course.ifOktoAddCourse(getContext())){
+                                    myCourseData.add(course);
+                                    count++;
+                                }
+                                if(count==30) break;
+                                i++;
+                                if(i==num) break;
+                            }
+                            if(count==0){
+                                Toast.makeText(getContext(), "所有课程均与您的课表冲突",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            Log.d("checkSearch",String.valueOf(count));
+                            freshCourseList(view, myCourseData);
+                            getContext().deleteFile("tmpCourseData.txt");
+                        } catch (JSONException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
             }
         });
 
-        end_search.setOnClickListener(new View.OnClickListener() {
+
+    /*    end_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences saveResult= getActivity().getSharedPreferences("courseInfo",getActivity().MODE_PRIVATE);
@@ -288,7 +326,9 @@ public class ElectiveAssistantFragment extends Fragment {
 
 
             }
-        });
+        });*/
+
+
 
         getData();
         freshCourseList(view,mDatas);

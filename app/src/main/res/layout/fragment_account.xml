@@ -5,96 +5,190 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.account.AccountFragment">
+
+   <Button
+       android:id="@+id/enter"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="ddl入口"
+       android:visibility="gone"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintStart_toStartOf="parent" />
+
+   <Button
+       android:id="@+id/toMyComment"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginEnd="16dp"
+       android:layout_marginRight="16dp"
+       android:layout_marginBottom="8dp"
+       android:text="查看评论"
+       app:backgroundTint="#8B0012"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent" />
+
    <TextView
-       android:id="@+id/text_account"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"/>
+       android:id="@+id/welcome"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginStart="16dp"
+       android:layout_marginLeft="16dp"
+       android:layout_marginTop="8dp"
+       android:text="欢迎！"
+       android:textColor="#FF8B0012"
+       android:textSize="30sp"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent" />
+
    <ScrollView
-       android:id="@+id/account_scroll"
+       android:id="@+id/infoList"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:background="@color/white"
-       android:visibility="visible"
-       tools:visibility="visible">
+       android:layout_height="0dp"
+       android:layout_marginStart="5dp"
+       android:layout_marginLeft="5dp"
+       android:layout_marginEnd="5dp"
+       android:layout_marginRight="5dp"
+       app:layout_constraintBottom_toTopOf="@+id/toMyComment"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/welcome">
 
-      <HorizontalScrollView
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/infoLayout"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-         <FrameLayout
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content">
+          android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/account_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/log_out"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.89" />
-            <Button
-                android:id="@+id/account_jmp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="jump"
-                android:layout_marginTop="300dp"
-                android:gravity="top"
-                app:layout_constraintTop_toBottomOf="@id/account_logout"
-                app:layout_constraintTop_toTopOf="@id/account_logout"
-                app:layout_constraintStart_toStartOf="@id/account_logout"
-                app:layout_constraintEnd_toEndOf="@id/account_logout" />
-            <TextView
-                android:id="@+id/account_username"
-                android:background="@color/black"
-                android:textColor="@color/white"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:gravity="top"
-                android:layout_marginTop="50dp"
-                app:layout_constraintBottom_toBottomOf="@id/account_jmp"
-                app:layout_constraintTop_toTopOf="@id/account_jmp"
-                app:layout_constraintStart_toStartOf="@id/account_jmp"
-                app:layout_constraintEnd_toEndOf="@id/account_jmp" />
-            <TextView
-                android:id="@+id/account_grade"
-                android:background="@color/black"
-                android:textColor="@color/white"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:gravity="top"
-                android:layout_marginTop="100dp"
-                app:layout_constraintBottom_toBottomOf="@id/account_logout"
-                app:layout_constraintTop_toTopOf="@id/account_logout"
-                app:layout_constraintStart_toStartOf="@id/account_logout"
-                app:layout_constraintEnd_toEndOf="@id/account_logout" />
-            <TextView
-                android:id="@+id/account_department"
-                android:background="@color/black"
-                android:textColor="@color/white"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:gravity="top"
-                android:layout_marginTop="150dp"
-                app:layout_constraintBottom_toBottomOf="@id/account_logout"
-                app:layout_constraintTop_toTopOf="@id/account_logout"
-                app:layout_constraintStart_toStartOf="@id/account_logout"
-                app:layout_constraintEnd_toEndOf="@id/account_logout" />
-            <TextView
-                android:id="@+id/account_major"
-                android:background="@color/black"
-                android:textColor="@color/white"
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:gravity="top"
-                android:layout_marginTop="200dp"
-                app:layout_constraintBottom_toBottomOf="@id/account_logout"
-                app:layout_constraintTop_toTopOf="@id/account_logout"
-                app:layout_constraintStart_toStartOf="@id/account_logout"
-                app:layout_constraintEnd_toEndOf="@id/account_logout" />
-         </FrameLayout>
-      </HorizontalScrollView>
+         <LinearLayout
+             android:id="@+id/classList"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="5dp"
+             android:orientation="vertical"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintHorizontal_bias="1.0"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/listStart"></LinearLayout>
+
+         <TextView
+             android:id="@+id/grade"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginLeft="16dp"
+             android:layout_marginTop="10dp"
+             android:text="年级："
+             android:textSize="18sp"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/majority" />
+
+         <TextView
+             android:id="@+id/listStart"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginLeft="16dp"
+             android:layout_marginTop="10dp"
+             android:text="我正在上的课："
+             android:textSize="18sp"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/grade" />
+
+         <TextView
+             android:id="@+id/usrname"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginLeft="16dp"
+             android:layout_marginTop="8dp"
+             android:text="用户名："
+             android:textSize="18sp"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
+
+         <TextView
+             android:id="@+id/account_username"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="UserName"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/usrname"
+             app:layout_constraintTop_toTopOf="@+id/usrname" />
+
+         <TextView
+             android:id="@+id/account_department"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Depart"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/department"
+             app:layout_constraintTop_toTopOf="@+id/department" />
+
+         <TextView
+             android:id="@+id/account_major"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="major"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/majority"
+             app:layout_constraintTop_toTopOf="@+id/majority" />
+
+         <TextView
+             android:id="@+id/account_grade"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="grade"
+             android:textSize="18sp"
+             app:layout_constraintStart_toEndOf="@+id/grade"
+             app:layout_constraintTop_toTopOf="@+id/grade" />
+
+         <TextView
+             android:id="@+id/department"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginLeft="16dp"
+             android:layout_marginTop="10dp"
+             android:text="学院："
+             android:textSize="18sp"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/usrname" />
+
+         <TextView
+             android:id="@+id/majority"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="16dp"
+             android:layout_marginLeft="16dp"
+             android:layout_marginTop="10dp"
+             android:text="专业："
+             android:textSize="18sp"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/department" />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
    </ScrollView>
+
+   <Button
+       android:id="@+id/selfManage"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginEnd="5dp"
+       android:layout_marginRight="5dp"
+       android:layout_marginBottom="8dp"
+       android:text="修改密码"
+       app:backgroundTint="@color/pkured"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toStartOf="@+id/toMyComment" />
+
+   <Button
+       android:id="@+id/account_logout"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginEnd="16dp"
+       android:layout_marginRight="16dp"
+       android:text="退出登录"
+       app:backgroundTint="@color/snow4"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

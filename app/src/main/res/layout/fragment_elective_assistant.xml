@@ -52,19 +52,14 @@
             android:layout_height="wrap_content"
             android:text="按名称搜索"
             android:textSize="15sp"/>
+
         <EditText
             android:id="@+id/search_on_name"
-            android:layout_width="wrap_content"
+            android:layout_width="275dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:singleLine="true"
-            android:hint="支持模糊搜索"/>
-        <Button
-            android:id="@+id/assis_search"
-            android:layout_width="70dp"
-            android:layout_height="40dp"
-            android:text="@string/start_search"
-            android:layout_marginLeft="100dp"/>
+            android:hint="支持模糊搜索"
+            android:singleLine="true" />
 
 
     </LinearLayout>
@@ -96,11 +91,11 @@
             android:inputType="number"
             android:hint="推荐课程数量"/>
         <Button
-            android:id="@+id/assis_search_end"
-            android:layout_width="100dp"
+            android:id="@+id/assis_search"
+            android:layout_width="70dp"
             android:layout_height="40dp"
-            android:text="@string/end_search"
-            android:layout_marginLeft="10dp"/>
+            android:text="@string/start_search"
+            android:layout_marginLeft="30dp"/>
     </LinearLayout>
 
     <ScrollView

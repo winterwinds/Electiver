@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +67,10 @@ public class ListViewAdapter extends BaseSwipeAdapter {
         tv_time.setText("time: "+mDatas.get(position).GetTime());
         tv_time.setTextSize(10);
 
+        TextView tv_credit = (TextView) convertView.findViewById(R.id.swipe_credit);
+        tv_credit.setText("credit: "+mDatas.get(position).GetCredit());
+        tv_credit.setTextSize(10);
+
         //选课按钮
         final TextView choose = (TextView) convertView.findViewById(R.id.swipe_choose);
         choose.setTag(position);
@@ -83,7 +90,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
                     String whereToPlace = chooseCourse.getString("course"+i,"null");
                     //findone!
                     if(whereToPlace.equals("null")){
-                    //    whereToPlace+=i;
+                        //whereToPlace+=i;
                         courseTag += i;
                         break;
                     }
@@ -152,7 +159,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
                 new HttpThread(){
                     @Override
                     public void run(){
-                        doInsertCourse(getToken,getCid);
+                        doInsertCourse(getToken,obj);
                     }
                 }.start();
 
@@ -174,6 +181,7 @@ public class ListViewAdapter extends BaseSwipeAdapter {
         //已上过该课
         final SwipeLayout sl = (SwipeLayout) convertView.findViewById(getSwipeLayoutResourceId(position));
         final TextView delete  = (TextView) convertView.findViewById(R.id.delete);
+
         delete.setTag(position);
         delete.setOnClickListener(new OnClickListener() {
             @Override
@@ -191,16 +199,17 @@ public class ListViewAdapter extends BaseSwipeAdapter {
                 new HttpThread(){
                     @Override
                     public void run(){
-                        doInsertOldCourse(getToken,getCid);
+                        doInsertOldCourse(getToken,obj);
                     }
                 }.start();
 
                 mDatas.remove(obj);
                 notifyDataSetChanged();
                 sl.close();
+
             }
         });
-        final TextView courseInfo = (TextView) convertView.findViewById(R.id.swipe_checkInfo);
+        final TextView courseInfo = (TextView) convertView.findViewById(R.id.swipe_checkComment);
 
         //显示课程信息
         //onClick应该设置成打开一个课程详细介绍页面
@@ -208,7 +217,12 @@ public class ListViewAdapter extends BaseSwipeAdapter {
         courseInfo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "CourseInfo",Toast.LENGTH_LONG).show();
+                // Toast.makeText(mContext, "CourseInfo",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(mContext, CommentActivity.class);
+                intent.putExtra("course_id", mDatas.get(position).GetCid());
+                intent.putExtra("course_name", mDatas.get(position).GetName());
+                intent.putExtra("course_teacher", mDatas.get(position).GetTeacher());
+                mContext.startActivity(intent);
             }
         });
 
@@ -220,13 +234,13 @@ public class ListViewAdapter extends BaseSwipeAdapter {
         pos = position;
         final SwipeLayout swipeLayout = (SwipeLayout) v.findViewById(R.id.swipe);
 
-        swipeLayout.addSwipeListener(new SimpleSwipeListener() {
+        /*swipeLayout.addSwipeListener(new SimpleSwipeListener() {
             @Override
             public void onOpen(SwipeLayout layout) {//当隐藏的删除menu被打开的时候的回调函数
                 YoYo.with(Techniques.Tada).duration(500).delay(100).playOn(layout.findViewById(R.id.trash));
 
             }
-        });
+        });*/
 
         swipeLayout.setOnDoubleClickListener(new SwipeLayout.DoubleClickListener() {
             @Override

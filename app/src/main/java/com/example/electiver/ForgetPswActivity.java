@@ -51,7 +51,7 @@ public class ForgetPswActivity extends AppCompatActivity {
                     new HttpThread(){
                         @Override
                         public void run(){
-                            doAlterPassword(username, email, md5newPsw);
+                            doAlterPassword(username, md5newPsw);
                         }
                     }.start();
                     finish();

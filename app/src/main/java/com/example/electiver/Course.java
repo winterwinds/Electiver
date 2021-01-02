@@ -10,6 +10,7 @@ import org.json.JSONObject;
 public class Course {
     private String cid;
     private String name;
+    private String classnum;
     private String category;
     private String credit;
     private String teacher;
@@ -25,7 +26,7 @@ public class Course {
         timetag1="null";
         timetag2="null";
     }
-    public Course(String c1, String c2, String c3, String c4, String c5, boolean[] c6, String[] c7, String c8){
+    public Course(String c1, String c2, String c3, String c4, String c5, boolean[] c6, String[] c7, String c8, String c9){
         days=new boolean[7];
         time=new String[7];
         cid=c1;
@@ -35,6 +36,7 @@ public class Course {
         teacher=c5;
         timetag1="null";
         timetag2="null";
+        classnum=c9;
         String[] sevendays={"mon","tue","wed","thu","fri","sat","sun"};
         for(int i=0;i<7;i++) days[i]=c6[i];
         for(int i=0;i<7;i++){
@@ -110,6 +112,7 @@ public class Course {
     public void SetDepartment(String d){
         depart = d;
     }
+    public void SetClassnum(String c){classnum = c;}
     public Boolean SetSchedule(Boolean[] d, String[] t){
         if(d.length!=7 || t.length!=7){
             return false;
@@ -133,6 +136,7 @@ public class Course {
             json.put("credit", credit);
             json.put("teacher", teacher);
             json.put("depart",depart);
+            json.put("classnum",classnum);
             String[] sevendays={"mon","tue","wed","thu","fri","sat","sun"};
             String[] possibletimes={"1-2","3-4","5-6","7-8","7-9","10-11","10-12"};
             for(int i=0;i<7;i++){
@@ -155,14 +159,23 @@ public class Course {
             SetName(getAttr);
             getAttr = obj.getString("cid");
             SetCid(getAttr);
-            getAttr = obj.getString("category");
-            SetCategory(getAttr);
-            getAttr = obj.getString("credit");
-            SetCredit(getAttr);
+            if(obj.has("category")){
+                getAttr = obj.getString("category");
+                SetCategory(getAttr);
+            }
+            if(obj.has("credit")){
+                getAttr = obj.getString("credit");
+                SetCredit(getAttr);
+            }
             getAttr = obj.getString("teacher");
             SetTeacher(getAttr);
+            getAttr = obj.getString("classnum");
+            SetClassnum(getAttr);
+            getAttr = obj.getString("depart");
+            SetDepartment(getAttr);
 
             getAttr = obj.getString("mon");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[0]=true;
                 time[0]=getAttr;
@@ -171,8 +184,9 @@ public class Course {
                 }else{
                     timetag2="mon"+modifyTime(getAttr);
                 }
-            }
+            }else{time[0]="";}
             getAttr = obj.getString("tue");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[1]=true;
                 time[1]=getAttr;
@@ -181,8 +195,9 @@ public class Course {
                 }else{
                     timetag2="tue"+modifyTime(getAttr);
                 }
-            }
+            }else{time[1]="";}
             getAttr = obj.getString("wed");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[2]=true;
                 time[2]=getAttr;
@@ -191,8 +206,9 @@ public class Course {
                 }else{
                     timetag2="wed"+modifyTime(getAttr);
                 }
-            }
+            }else{time[2]="";}
             getAttr = obj.getString("thu");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[3]=true;
                 time[3]=getAttr;
@@ -201,8 +217,9 @@ public class Course {
                 }else{
                     timetag2="thu"+modifyTime(getAttr);
                 }
-            }
+            }else{time[3]="";}
             getAttr = obj.getString("fri");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[4]=true;
                 time[4]=getAttr;
@@ -211,8 +228,9 @@ public class Course {
                 }else{
                     timetag2="fri"+modifyTime(getAttr);
                 }
-            }
+            }else{time[4]="";}
             getAttr = obj.getString("sat");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[5]=true;
                 time[5]=getAttr;
@@ -221,8 +239,9 @@ public class Course {
                 }else{
                     timetag2="sat"+modifyTime(getAttr);
                 }
-            }
+            }else{time[5]="";}
             getAttr = obj.getString("sun");
+            //Log.d("testCourse", getAttr);
             if(!getAttr.equals("")){
                 days[6]=true;
                 time[6]=getAttr;
@@ -231,7 +250,7 @@ public class Course {
                 }else{
                     timetag2="sun"+modifyTime(getAttr);
                 }
-            }
+            }else{time[6]="";}
 
         }catch(JSONException e){
             e.printStackTrace();
@@ -262,6 +281,8 @@ public class Course {
     public boolean hasDayClasses(int i){return days[i];}
     public String GetTimetag1(){return timetag1;}
     public String GetTimetag2(){return timetag2;}
+    public String GetClassnum(){return classnum;}
+    public String GetTimei(int i){return time[i];}
 
     public String GetTime(){
         String result="";

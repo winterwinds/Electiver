@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     public String UserName;
     public String Grade, Department, Major, Token;
 
-    LoginActivity.MyHandler myHandler = new LoginActivity.MyHandler(this);
+    MyHandler myHandler = new MyHandler(this);
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -91,6 +91,12 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("UserName",userName);
                 editor.commit();
 
+                SharedPreferences courseInfo = getSharedPreferences("courseInfo",MODE_PRIVATE);
+                SharedPreferences.Editor courseEditor = courseInfo.edit();
+
+                SharedPreferences timeInfo = getSharedPreferences("timeAvail",MODE_PRIVATE);
+                SharedPreferences.Editor timeEditor = timeInfo.edit();
+
                 if (TextUtils.isEmpty(userName)) {
                     Toast.makeText(LoginActivity.this, "请输入用户名", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(psw)) {
@@ -113,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                                     msg[0].what=0x03;
                                     msg[0].obj=res;
 
+
                                     editor.putString("roughInfo",res);
                                     editor.commit();
                                     Log.d("LoginOutput", res);
@@ -126,6 +133,64 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     };
                     thread.start();
+                    try{
+                        thread.join();
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    String roughtInfo = saveinfo.getString("roughInfo","null");
+
+
+                    try{
+                        JSONObject json = new JSONObject(roughtInfo);
+                        Token = json.getString("token");
+                        Department = json.getString("department");
+                        Major = json.getString("major");
+                        Grade = json.getString("grade");
+                        editor.putString("Token", Token);
+                        editor.putString("Department",Department);
+                        editor.putString("Grade",Grade);
+                        editor.putString("Major", Major);
+                        editor.apply();
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    final String[] getAllMyCourse = new String[1];
+                    HttpThread thread2 = new HttpThread(){
+                        @Override
+                        public void run(){
+                            getAllMyCourse[0] =doQueryMyCourse(Token);
+                        }
+                    };
+                    thread2.start();
+
+                    try{
+                        thread2.join();
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    try{
+                        JSONObject json = new JSONObject(getAllMyCourse[0]);
+                        int courseNum = json.length();
+                        courseEditor.putString("courseNum",String.valueOf(courseNum));
+                        String courseTag = "course";
+                        for(int i=0;i<courseNum;i++){
+                            String courseAttr = json.getString(String.valueOf(i));
+                            Course mycourse = new Course();
+                            mycourse.SetAllAttr(courseAttr);
+                            courseEditor.putString(courseTag+i,courseAttr);
+                            if(!mycourse.GetTimetag1().equals("null")){
+                                timeEditor.putString(mycourse.GetTimetag1(),"true");
+                            }
+                            if(!mycourse.GetTimetag2().equals("null")){
+                                timeEditor.putString(mycourse.GetTimetag2(),"true");
+                            }
+                        }
+                        courseEditor.apply();
+                        timeEditor.apply();
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                    }
                 }
             }
         });

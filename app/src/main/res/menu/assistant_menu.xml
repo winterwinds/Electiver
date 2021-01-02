@@ -8,5 +8,5 @@
         android:title="@string/have_choosed"/>
     <item
         android:id="@+id/course_info"
-        android:title="@string/course_info"/>
+        android:title="@string/course_comment"/>
 </menu>

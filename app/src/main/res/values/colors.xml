@@ -8,7 +8,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="pkured">#FF820912</color>
+    <color name="light_red">#FFEE6363</color>
     <color name="floral_white">#FFFAF0</color>
     <color name="dark_olive_green2">#BCEE68</color>
+    <color name="snow2">#EEE9E9</color>
+    <color name="snow3">#CDC9C9</color>
     <color name="snow4">#8B8989</color>
+    <color name="gainsboro">#DCDCDC</color>
+    <color name="light_goldenrod">#EEDD82</color>
+    <color name="goldenrod">#FFC125</color>
+    <color name="grey">#D7D7D7</color>
+    <color name="transparent">#00000000</color>
 </resources>

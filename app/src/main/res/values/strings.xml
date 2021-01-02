@@ -28,11 +28,11 @@
     <!-- schedule fragment -->
     <!-- assistant fragment -->
     <string name="choose">选课</string>
-    <string name="have_choosed">我已上过该课</string>
-    <string name="course_info">查看课程信息</string>
+    <string name="have_choosed">已经\n上过</string>
+    <string name="course_comment">课程\n评论</string>
     <string name="delete_course">从列表中删除</string>
     <string name="start_search">搜索</string>
-    <string name="end_search">显示结果</string>
+    <string name="end_search">显示搜索结果</string>
     <!-- assistant fragment -->
 
 </resources>

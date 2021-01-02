@@ -171,6 +171,9 @@ public class HttpThread extends Thread{
         try{
             String myurl = "http://47.92.240.179:5001/recommend";
             String tosend ="token="+token+"&type1="+type+"&recom_num"+recom_num;
+
+            Log.d("doRecommend", tosend);
+
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
 
@@ -183,6 +186,7 @@ public class HttpThread extends Thread{
             if(con.getResponseCode()==200) {
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 result = reader.readLine();
+                Log.d("doRecommend", result);
                 if(reader != null){
                     try{
                         reader.close();
@@ -216,6 +220,7 @@ public class HttpThread extends Thread{
         for(int i=1;i<para.size();i++){
             tosend.append("&").append(para.get(i).first).append("=").append(para.get(i).second);
         }
+        Log.d("doCourseQuery",tosend.toString());
         String result = "";
         BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
@@ -233,6 +238,7 @@ public class HttpThread extends Thread{
             if(conn.getResponseCode()==200) {
                 reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 result = reader.readLine();
+                Log.d("doCourseQuery",result);
                 if(reader != null){
                     try{
                         reader.close();
@@ -271,7 +277,7 @@ public class HttpThread extends Thread{
                 break;
             case 2:
                 day="tue";
-                dayti="tuei";
+                dayti="tuti";
                 break;
             case 3:
                 day="wed";
@@ -294,7 +300,7 @@ public class HttpThread extends Thread{
                 dayti="suti";
                 break;
         }
-        tosend+="&use_time=true&depart=信息科学技术学院&"+day+"=true";
+        tosend+="&use_time=true&"+day+"=true";
         tosend+="&"+dayti+"=";
         tosend+=String.valueOf(starttime);
         tosend+="--";
@@ -377,6 +383,8 @@ public class HttpThread extends Thread{
 
     public int doDeleteComment(String token, String comid){
         int getresult=0;
+        String result = "";
+        BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
@@ -392,6 +400,20 @@ public class HttpThread extends Thread{
             con.getInputStream();
 
             getresult=con.getResponseCode();
+            if(con.getResponseCode()==200){
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = reader.readLine();
+                Log.d("doDeleteComment", result);
+                if(reader!=null){
+                    try{
+                        reader.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d("doDeleteComment", "responseCode error");
+            }
         }catch(MalformedURLException e){
             e.printStackTrace();
         }catch(IOException e){
@@ -426,6 +448,7 @@ public class HttpThread extends Thread{
             if(con.getResponseCode()==200){
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 result = reader.readLine();
+                Log.d("doQueryComment",result);
                 if(reader!=null){
                     try{
                         reader.close();
@@ -517,6 +540,7 @@ public class HttpThread extends Thread{
             if(con.getResponseCode()==200){
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 result = reader.readLine();
+                Log.d("doQueryDDL",result);
                 if(reader!=null){
                     try{
                         reader.close();
@@ -545,6 +569,8 @@ public class HttpThread extends Thread{
     public int doInsertDDL(String token, String cid,
                            String ddlcontent, String ddltime, String ddlstate){
         int getresult=0;
+        String result = "";
+        BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
@@ -561,6 +587,20 @@ public class HttpThread extends Thread{
             con.getInputStream();
 
             getresult=con.getResponseCode();
+            if(con.getResponseCode()==200){
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = reader.readLine();
+                Log.d("insertDDL", result);
+                if(reader!=null){
+                    try{
+                        reader.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d("insertDDL", "responsecode error: "+getresult);
+            }
         }catch(MalformedURLException e){
             e.printStackTrace();
         }catch(IOException e){
@@ -664,13 +704,23 @@ public class HttpThread extends Thread{
         return getresult;
     }
 
-    public int doInsertOldCourse(String token, String cid){
+    public int doInsertOldCourse(String token, Course mycourse){
         int getresult=0;
+        String result = "";
+        BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
             String myurl = "http://47.92.240.179:5001/usrcou/oldinsertusrcou";
-            String tosend ="token="+token+"&cid="+cid;
+            String tosend ="token="+token+"&cid="+mycourse.GetCid()+"&name="+mycourse.GetName();
+            tosend = tosend+"&classnum="+mycourse.GetClassnum()+"&teacher="+mycourse.GetTeacher();
+            tosend = tosend+"&depart="+mycourse.GetDepartment();
+            String[] sevendays = {"mon","tue","wed","thu","fri","sat","sun"};
+            for(int i=0;i<7;i++){
+                tosend = tosend+"&"+sevendays[i]+"="+mycourse.GetTimei(i);
+            }
+
+
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
 
@@ -681,6 +731,20 @@ public class HttpThread extends Thread{
             con.getInputStream();
 
             getresult=con.getResponseCode();
+            if(con.getResponseCode()==200){
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = reader.readLine();
+                Log.d("doInsertoldCourse",result);
+                if(reader!=null){
+                    try{
+                        reader.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d("doInsertoldCourse", "responsecode error");
+            }
         }catch(MalformedURLException e){
             e.printStackTrace();
         }catch(IOException e){
@@ -695,13 +759,24 @@ public class HttpThread extends Thread{
         成功返回200，失败返回404或405
      -------------------------------*/
 
-    public int doInsertCourse(String token, String cid){
+    public int doInsertCourse(String token, Course mycourse){
         int getresult=0;
+        String result = "";
+        BufferedReader reader = null;
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
             String myurl = "http://47.92.240.179:5001/usrcou/insertusrcou";
-            String tosend ="token="+token+"&cid="+cid;
+            String tosend ="token="+token+"&cid="+mycourse.GetCid()+"&name="+mycourse.GetName();
+            tosend = tosend+"&classnum="+mycourse.GetClassnum()+"&teacher="+mycourse.GetTeacher();
+            tosend = tosend+"&depart="+mycourse.GetDepartment();
+            String[] sevendays = {"mon","tue","wed","thu","fri","sat","sun"};
+            for(int i=0;i<7;i++){
+                tosend = tosend+"&"+sevendays[i]+"="+mycourse.GetTimei(i);
+            }
+
+            Log.d("doInsertCourse", tosend);
+
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
 
@@ -712,6 +787,20 @@ public class HttpThread extends Thread{
             con.getInputStream();
 
             getresult=con.getResponseCode();
+            if(con.getResponseCode()==200){
+                reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                result = reader.readLine();
+                Log.d("doInsertCourse",result);
+                if(reader!=null){
+                    try{
+                        reader.close();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d("doInsertCourse", "responsecode error");
+            }
         }catch(MalformedURLException e){
             e.printStackTrace();
         }catch(IOException e){
@@ -749,6 +838,7 @@ public class HttpThread extends Thread{
             if(con.getResponseCode()==200){
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 result = reader.readLine();
+                Log.d("doQueryMyCourse", result);
                 if(reader!=null){
                     try{
                         reader.close();
@@ -772,7 +862,7 @@ public class HttpThread extends Thread{
         删除自己的课程
         参数为token
         连接失败在logcat中提示，Tag：doDeleteCourse
-        成功返回cid
+        成功返回字符串
      -------------------------------*/
 
     public String doDeleteCourse(String token, String cid){
@@ -797,6 +887,7 @@ public class HttpThread extends Thread{
             if(con.getResponseCode()==200){
                 reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 result = reader.readLine();
+                Log.d("doDeleteCourse",result);
                 if(reader!=null){
                     try{
                         reader.close();
@@ -823,7 +914,7 @@ public class HttpThread extends Thread{
         成功返回字符串
      -------------------------------*/
 
-    public String doAlterPassword(String username, String email, String newpsw){
+    public String doAlterPassword(String username, String newpsw){
         int getresult=0;
         String result = "";
         BufferedReader reader = null;
@@ -831,7 +922,7 @@ public class HttpThread extends Thread{
                 detectDiskWrites().detectNetwork().penaltyLog().build());
         try{
             String myurl = "http://47.92.240.179:5001/user/alter";
-            String tosend ="username="+username+"&email="+email+"&new_password="+newpsw;
+            String tosend ="username="+username+"&new_password="+newpsw;
             URL MyUrl = new URL(myurl);
             HttpURLConnection con = (HttpURLConnection) MyUrl.openConnection();
 

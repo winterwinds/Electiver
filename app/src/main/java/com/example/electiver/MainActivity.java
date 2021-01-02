@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences checkToken = getSharedPreferences("loginInfo", MODE_PRIVATE);
         String getToken = checkToken.getString("Token","null");
         Log.d("checkToken",getToken);
+        // reLogin();
 
         final Message[] msg = new Message[1];
         if(!getToken.equals("null")){
@@ -140,42 +141,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
-       /* SharedPreferences firstuse = getSharedPreferences("loginInfo", MODE_PRIVATE);
-        isFirstUse = firstuse.getBoolean("isLogin", false);
-        if(!isFirstUse) {
-            SharedPreferences.Editor editor = firstuse.edit();
-            editor.putBoolean("isLogin",false);
-            editor.commit();
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, LoginActivity.class);
-            startActivityForResult(intent, 1);
-            UserName = firstuse.getString("UserName","none");
-            Grade = firstuse.getString("Grade","none");
-            Department = firstuse.getString("Department", "none");
-            Major = firstuse.getString("Major", "none");
-            Token = firstuse.getString("Token","none");
-        }else{
-            UserName = firstuse.getString("UserName","none");
-            Grade = firstuse.getString("Grade","none");
-            Department = firstuse.getString("Department", "none");
-            Major = firstuse.getString("Major", "none");
-            Token = firstuse.getString("Token","none");
-        }*/
     }
 
     public void initTimeOccupy(){
         SharedPreferences occupyTime=getSharedPreferences("timeAvail",MODE_PRIVATE);
         SharedPreferences.Editor editor = occupyTime.edit();
-        String possibledays[] ={"mon","tue","wed","thu","fri","sat","sun"};
-        String possibletime[] ={"1-2","3-4","5-6","7-8","10-11"};
+        String []possibledays ={"mon","tue","wed","thu","fri","sat","sun"};
+        String []possibletime ={"1-2","3-4","5-6","7-8","10-11"};
         for(int i=0;i<possibledays.length;i++){
             for(int j=0;j<possibletime.length;j++){
                 String timetag = possibledays[i]+possibletime[j];
                 editor.putString(timetag,"false");
             }
         }
-        editor.commit();
+        editor.apply();
     }
     /*
         重新登陆，清空本地存储的所有信息，并弹出登录界面。
@@ -184,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences getUserInfo = getSharedPreferences("loginInfo",MODE_PRIVATE);
         SharedPreferences.Editor editor=getUserInfo.edit();
         editor.clear();
-        editor.commit();
+        editor.apply();
         SharedPreferences getCourseInfo = getSharedPreferences("courseInfo",MODE_PRIVATE);
         editor=getCourseInfo.edit();
         editor.clear();
@@ -196,24 +175,6 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(MainActivity.this, LoginActivity.class);
         startActivityForResult(intent, 1);
 
-      /*  SharedPreferences saveinfo = getSharedPreferences("loginInfo", MODE_PRIVATE);
-        try{
-            JSONObject json = new JSONObject(saveinfo.getString("roughInfo","{}"));
-
-            String getToken=json.getString("token");
-            String getGrade = json.getString("grade");
-            String getDepart = json.getString("department");
-            String getMajor = json.getString("major");
-            editor = saveinfo.edit();
-            editor.putString("Token", getToken);
-            editor.putString("Grade", getGrade);
-            editor.putString("Department",getDepart);
-            editor.putString("Major", getMajor);
-            editor.commit();
-
-        }catch(JSONException e){
-            e.printStackTrace();
-        }*/
     }
 
     public String getUserName(){ return UserName; }

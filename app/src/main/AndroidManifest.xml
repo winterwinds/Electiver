@@ -35,10 +35,21 @@
             android:name=".DeadlineActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".TimeSelectActivity"></activity>
+            android:name=".EditDeadlineActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".ForgetPswActivity">
-        </activity>
+            android:name=".CommentActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".MyCommentActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".TimeSelectActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ForgetPswActivity"
+            android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>
