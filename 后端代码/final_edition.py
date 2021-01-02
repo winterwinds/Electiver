@@ -846,9 +846,6 @@ def user_info():
 	info = userInfoTable.query.filter_by(id=uid).first()
 	result={}
 
-	# if have_registed.__len__() != 0: # 判断是否已被注册
-	#     passwordRight = userInfoTable.query.filter_by(username=request.form['username'],password=request.form['password']).all()
-	#     if passwordRight.__len__() != 0:
 
 	userobject=info.__dict__
 	result['success']='success query'
@@ -860,12 +857,7 @@ def user_info():
 		else:
 			result[i] = str(userobject[i])
 	return json.dumps(result)
-	#     else:
-	#         result['success']='password wrong'
-	#         return json.dumps(result)
-	# else:
-	#     result['success']='username is not exist'
-	#     return json.dumps(result)
+	
 
 #作者：刘竟择
 #此方法处理查看全部用户信息 需进行管理员登录成功 
@@ -904,16 +896,6 @@ def user_info_all():
 #此方法处理修改密码
 @app.route('/user/alter',methods=['POST'])
 def alter():
-	# auth_token = request.form.get('token')
-	# auth = decode_auth_token(auth_token)
-	# if auth == 2:
-	# 	return u'Signature expired. Please log in again.\n'
-	# if auth == 3:
-	# 	return u'Invalid token. Please log in again.\n'
-	# uid = auth['uid']
-	# rk = auth['rk']
-	# if rk == 2:
-	# 	return u"Permission Denied"
 	have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
 	if have_registed.__len__() != 0: # 判断是否已被注册
 		passwordRight = userInfoTable.query.filter_by(username=request.form['username']).all()
@@ -928,18 +910,6 @@ def alter():
 		return 'this username not exist'
 
 
-	# have_registed = userInfoTable.query.filter_by(id=uid).all()
-	# if have_registed.__len__() != 0: # 判断是否已被注册
-	# 	passwordRight = userInfoTable.query.filter_by(username=request.form['username'],password=request.form['password']).all()
-	# 	if passwordRight.__len__() != 0:
-	# userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
-	# userinfo.password=request.form['new_password']
-	# userdb.session.commit()
-	# return 'change password success'
-	# 	else:
-	# 		return 'password wrong'
-	# else:
-	# 	return 'this username not exist'
 
 #作者：刘竟择
 #此方法处理管理员修改密码  
@@ -1084,6 +1054,7 @@ RESULT_NUM = int()
 # In[4]:
 
 
+#作者：刘竟择
 #--------读入数据
 #--用户信息数据库
 def get_usr_data():
@@ -1110,12 +1081,14 @@ def get_CATEGORY(courses):
 # In[6]:
 
 
+#作者：刘竟择
 #--------读入数据：需要推荐课程的用户ID
 def get_usr_ID(uid):
 	global ID
 	ID  = uid
     
 
+#作者：刘竟择
 #ID
 #--------读入数据：初步推荐的用户数，根据数据集大小确定
 def get_REC_NUM():
@@ -1124,13 +1097,14 @@ def get_REC_NUM():
 	REC_NUM = get_sum
 
 
+#作者：刘竟择
 #--------读入数据：推荐的课程数，根据需求确定
 def get_RESULT_SUM(recom_num):
 	global RESULT_NUM
 	get_sum = int(recom_num)
 	RESULT_NUM = get_sum
   
-
+#作者：刘竟择
 #--------读入数据：需要推荐的课程类型，根据需求确定
 def get_type(type1,type2):
 	# print("type1",type1)
@@ -1241,7 +1215,6 @@ def recom():
 
 	keys = DICTION.keys()
 	if uid  not in keys:
-		# return "aaaa"
 		print("a"*100)
 		result = {}
 		lst =  [[u'04834200', 1], [u'03033710', 1], [u'00131480', 1]]
@@ -1303,44 +1276,6 @@ def recom():
 
 
 
-
-
-	# result = {}
-	# lst = sum_recommend(recommend())
-	# cnt = 0
-	# title = ['cid','name','classnum','category','credit','chours','teacher','stucount','totalweek','mon','tue','wed','thu','fri','sat','sun','examtime','note','depart']
-	# for i in lst:
-	# 	# print(i)
-	# 	cid = i[0]
-	# 	sql = 'select * from coursetable where cid = %s'
-	# 	args = (cid)
-	# 	results = querysql(mysql, sql, args)
-	# 	print(results)
-	# 	print('*'*100)
-	# 	for j in results:
-	# 		oneinfo = dict(zip(title,list(j)))
-	# 		result[str(cnt)] = oneinfo
-	# 		cnt += 1
-	# return json.dumps(result)
-
-
-
-	
-	# cnt = 0
-	# for i in list(results):
-	# 	oneinfo = dict(zip(title,list(i)))
-	# 	leng = len(oneinfo['name'])
-	# 	k = 0
-	# 	flag = 0
-	# 	print(oneinfo['name'])
-	# 	#oneinfo['name'] = oneinfo['name'].decode('utf8')
-	# 	for k in range(leng-1,-1,-1):
-	# 		if u'\u4e00' <= oneinfo['name'][k] <= u'\u9fa5' or oneinfo['name'][k] == '\uFF09':
-	# 			break
-	# 	oneinfo['name'] = oneinfo['name'][:k+1]
-	# 	courseinfo[str(cnt)] = oneinfo
-	# 	cnt += 1
-	# return json.dumps(courseinfo)
 # In[ ]:
 
 if __name__ == '__main__':
