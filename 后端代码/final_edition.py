@@ -672,11 +672,11 @@ def deleteusrcou():
 
 	sql1="DELETE FROM usrcoutable WHERE id = %s AND cid = %s"
 	args = (uid,cid)
-	print sql
+	print sql1
 	result1 = updatesql(mysql, sql1, args)
 	sql2="DELETE FROM ddltable WHERE id = %s AND cid = %s"
 	args = (uid,cid)
-	print sql
+	print sql2
 	result2 = updatesql(mysql, sql2, args)
 	if result1 and result2:
 		return u'delete success\n'
@@ -753,7 +753,7 @@ def olddeleteusrcou():
 
 	sql1="DELETE FROM oldusrcoutable WHERE id = %s AND cid = %s"
 	args = (uid,cid)
-	print sql
+	print sql1
 	result1 = updatesql(mysql, sql1, args)
 	
 	if result1 :
