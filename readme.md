@@ -1,4 +1,6 @@
 ## backend content
+后端代码为后端代码\final_edition.py  
+api文档为后端代码\api文档最终版.docx  
 environment : flask, python2.7  
 运行代码请用  
 
