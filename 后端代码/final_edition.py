@@ -955,14 +955,14 @@ def alter_admin():
 	rk = auth['rk']
 	if rk == 2:
 		return u"Permission Denied"
-	# have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
-	# if have_registed.__len__() != 0: # 判断是否已被注册
-	userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
-	userinfo.password=request.form['new_password']
-	userdb.session.commit()
-	return 'admin change password success'
-	# else:
-	# 	return 'this username not exist'
+	have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
+	if have_registed.__len__() != 0: # 判断是否已被注册
+		userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
+		userinfo.password=request.form['new_password']
+		userdb.session.commit()
+		return 'admin change password success'
+	else:
+		return 'this username not exist'
 
 #作者：刘竟择
 #此方法处理管理员提升权限  
@@ -978,14 +978,14 @@ def rank_admin():
 	rk = auth['rk']
 	if rk == 2:
 		return u"Permission Denied"
-	# have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
-	# if have_registed.__len__() != 0: # 判断是否已被注册
-	userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
-	userinfo.rk='1'
-	userdb.session.commit()
-	return 'admin change rank success'
-	# else:
-	# 	return 'this username not exist'
+	have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
+	if have_registed.__len__() != 0: # 判断是否已被注册
+		userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
+		userinfo.rk='1'
+		userdb.session.commit()
+		return 'admin change rank success'
+	else:
+		return 'this username not exist'
 
 #作者：刘竟择
 #此方法处理用户删除 
@@ -1001,9 +1001,9 @@ def delete_user():
 	rk = auth['rk']
 	if rk == 2:
 		return u"Permission Denied"
-	# have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
-	# if have_registed.__len__() == 0: # 判断是否已被注册
-	# 	return 'this username not exist'
+	have_registed = userInfoTable.query.filter_by(username=request.form['username']).all()
+	if have_registed.__len__() == 0: # 判断是否已被注册
+		return 'this username not exist'
 	userinfo = userInfoTable.query.filter(userInfoTable.id == uid).first()
 	userdb.session.delete(userinfo)
 	userdb.session.commit()
